@@ -1,0 +1,13 @@
+{
+  "name": "proteja-balao-servidor",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Servidor online do jogo Proteja o Balão",
+  "main": "servidor.js",
+  "scripts": {
+    "start": "node servidor.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.3"
+  }
+}
