@@ -1,0 +1,5217 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Proteja o Balão</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,sans-serif;
+    background:
+        radial-gradient(circle at 50% 0%,#25235c 0%,#09091c 45%,#03030a 100%);
+    color:white;
+    min-height:100vh;
+    overflow:hidden;
+    user-select:none;
+    -webkit-user-select:none;
+}
+
+button,input{
+    font-family:Arial,sans-serif;
+}
+
+button{
+    cursor:pointer;
+    border:0;
+}
+
+/* ================= MENU ================= */
+
+.tela{
+    width:100%;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
+
+.painel-menu{
+    width:100%;
+    max-width:430px;
+    text-align:center;
+    padding:25px 18px;
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:30px;
+    background:rgba(12,12,35,.88);
+    box-shadow:
+        0 0 35px rgba(105,80,255,.3),
+        inset 0 0 30px rgba(255,255,255,.03);
+}
+
+.logo{
+    font-size:42px;
+    font-weight:900;
+    letter-spacing:2px;
+    text-shadow:
+        0 0 8px #fff,
+        0 0 25px #7d5cff,
+        0 0 45px #7d5cff;
+}
+
+.subtitulo{
+    margin:8px 0 20px;
+    color:#bdb9ff;
+}
+
+input{
+    width:100%;
+    padding:15px;
+    border-radius:15px;
+    border:1px solid #555;
+    outline:none;
+    background:#15152d;
+    color:white;
+    font-size:16px;
+    text-align:center;
+    margin-bottom:12px;
+}
+
+.menu-btn{
+    width:100%;
+    padding:15px;
+    margin:6px 0;
+    border-radius:15px;
+    color:white;
+    font-weight:bold;
+    font-size:16px;
+    background:linear-gradient(135deg,#654cff,#9d4edd);
+    box-shadow:0 6px 18px rgba(110,70,255,.25);
+}
+
+.menu-btn:active{
+    transform:scale(.97);
+}
+
+.menu-info{
+    margin-top:15px;
+    color:#aaa;
+    font-size:13px;
+}
+
+.modo-card{
+    width:100%;
+    max-width:430px;
+    text-align:center;
+    padding:25px 18px;
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:30px;
+    background:rgba(12,12,35,.92);
+    box-shadow:0 0 35px rgba(105,80,255,.3);
+}
+
+.modo-opcoes{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin-top:18px;
+}
+
+.modo-btn{
+    min-height:120px;
+    border-radius:20px;
+    color:white;
+    background:linear-gradient(135deg,#29295a,#17172f);
+    border:2px solid rgba(255,255,255,.15);
+    font-size:18px;
+    font-weight:bold;
+    padding:15px 8px;
+}
+
+.modo-btn strong{
+    display:block;
+    font-size:42px;
+    margin-bottom:8px;
+}
+
+.modo-btn small{
+    display:block;
+    color:#aaa;
+    font-size:11px;
+    line-height:1.3;
+    font-weight:normal;
+}
+
+.modo-btn.selecionado{
+    border-color:#9d7cff;
+    box-shadow:0 0 22px rgba(125,92,255,.45);
+    transform:scale(1.02);
+}
+
+#controles .pc-ajuda{
+    display:none;
+    pointer-events:none;
+    position:absolute;
+    right:20px;
+    bottom:0;
+    color:#ddd;
+    font-size:13px;
+    text-align:center;
+    background:rgba(0,0,0,.5);
+    padding:8px 12px;
+    border-radius:12px;
+}
+
+body.modo-pc #controles{
+    justify-content:flex-end;
+}
+
+body.modo-pc #controles #botaoPoder{
+    display:none;
+}
+
+body.modo-pc #controles .pc-ajuda{
+    display:block;
+}
+
+body.modo-pc #areaJogo{
+    cursor:default;
+}
+
+body.modo-pc #areaJogo:active{
+    cursor:default;
+}
+
+@media(max-width:520px){
+    .modo-opcoes{
+        grid-template-columns:1fr;
+    }
+    .modo-btn{
+        min-height:95px;
+    }
+    .modo-btn strong{
+        font-size:34px;
+        display:inline-block;
+        margin-right:8px;
+        margin-bottom:0;
+    }
+}
+
+/* ================= JOGO ================= */
+
+#jogo{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:
+        radial-gradient(circle at 50% 35%,#191943,#050511 70%);
+    overflow:hidden;
+}
+
+/* ================= CENÁRIOS DOS BOSSES ================= */
+
+#jogo.cenario-golem{
+    background:
+        radial-gradient(circle at 50% 55%,rgba(130,100,70,.28),transparent 30%),
+        linear-gradient(180deg,#17120e 0%,#3b2a20 48%,#120d0a 100%);
+}
+
+#jogo.cenario-golem #areaJogo:before,
+#jogo.cenario-golem #areaJogo:after{
+    content:"";
+    position:absolute;
+    pointer-events:none;
+    z-index:1;
+}
+
+#jogo.cenario-golem #areaJogo:before{
+    inset:0;
+    background:
+        radial-gradient(ellipse at 10% 15%,#5b4534 0 10%,transparent 11%),
+        radial-gradient(ellipse at 90% 20%,#4a382b 0 13%,transparent 14%),
+        radial-gradient(ellipse at 50% 105%,#211711 0 30%,transparent 31%);
+    opacity:.9;
+}
+
+#jogo.cenario-golem #areaJogo:after{
+    left:0;right:0;bottom:0;height:22%;
+    background:linear-gradient(180deg,transparent,#100b08 65%);
+}
+
+#jogo.cenario-dragon{
+    background:
+        radial-gradient(circle at 70% 25%,rgba(255,255,255,.9) 0 5%,transparent 16%),
+        radial-gradient(circle at 25% 35%,rgba(255,255,255,.8) 0 7%,transparent 18%),
+        linear-gradient(180deg,#6ec8ff 0%,#bdeaff 48%,#eefaff 100%);
+}
+
+#jogo.cenario-dragon #areaJogo:before{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    z-index:1;
+    background:
+        radial-gradient(ellipse at 15% 25%,rgba(255,255,255,.95) 0 8%,transparent 20%),
+        radial-gradient(ellipse at 85% 45%,rgba(255,255,255,.9) 0 10%,transparent 23%),
+        radial-gradient(ellipse at 50% 80%,rgba(255,255,255,.85) 0 9%,transparent 24%);
+}
+
+#jogo.cenario-reaper{
+    background:
+        radial-gradient(circle at 50% 45%,#241a48,#090713 68%,#020207 100%);
+}
+
+#hud{
+    position:absolute;
+    top:10px;
+    left:10px;
+    right:10px;
+    z-index:50;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    pointer-events:none;
+}
+
+.hud-caixa{
+    background:rgba(5,5,20,.75);
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:14px;
+    padding:7px 11px;
+    font-size:13px;
+}
+
+#fase{
+    color:#ffd86b;
+    font-weight:bold;
+}
+
+#areaJogo{
+    position:absolute;
+    inset:0;
+    overflow:hidden;
+    touch-action:none;
+}
+
+/* ================= BALÃO ================= */
+
+#balao{
+    position:absolute;
+    width:65px;
+    height:82px;
+    left:50%;
+    bottom:105px;
+    transform:translateX(-50%);
+    z-index:20;
+}
+
+.balao-corpo{
+    position:absolute;
+    width:55px;
+    height:65px;
+    left:5px;
+    top:0;
+    border-radius:50% 50% 47% 47%;
+    background:linear-gradient(135deg,#ff4d6d,#ff1744);
+    box-shadow:0 0 15px #ff416c,0 0 30px rgba(255,40,80,.5);
+}
+
+.balao-corda{
+    position:absolute;
+    width:2px;
+    height:20px;
+    background:#ddd;
+    left:32px;
+    top:62px;
+}
+
+.balao-no{
+    position:absolute;
+    width:10px;
+    height:8px;
+    background:#ff1744;
+    left:27px;
+    top:60px;
+    transform:rotate(45deg);
+    z-index:3;
+}
+
+.balao-extra{
+    position:absolute;
+    inset:0;
+    z-index:5;
+    pointer-events:none;
+}
+
+/* brilho normal */
+.skin-normal .balao-corpo{
+    background:linear-gradient(135deg,#ff6b81,#ff1744 60%,#b00020);
+}
+
+/* OCEANO */
+.skin-ocean .balao-corpo{
+    background:
+        radial-gradient(circle at 25% 25%,#fff 0 5%,transparent 6%),
+        linear-gradient(135deg,#5ee7ff,#1472ff 60%,#102c9e);
+    box-shadow:0 0 15px #29c8ff,0 0 35px #1260ff;
+}
+
+/* VENENO */
+.skin-poison .balao-corpo{
+    background:
+        radial-gradient(circle at 70% 25%,#d9ff5c 0 7%,transparent 8%),
+        linear-gradient(135deg,#d6ff4b,#42c900 55%,#126600);
+    box-shadow:0 0 18px #71ff00,0 0 40px #34a800;
+}
+
+/* MÍSTICO */
+.skin-mystical .balao-corpo{
+    background:
+        radial-gradient(circle at 30% 25%,#fff 0 5%,transparent 6%),
+        linear-gradient(135deg,#ff7cf5,#743dff 55%,#28126b);
+    box-shadow:0 0 18px #c86cff,0 0 40px #743dff;
+}
+
+/* OURO */
+.skin-gold .balao-corpo{
+    background:linear-gradient(135deg,#fff19a,#ffd000 45%,#a96d00);
+    box-shadow:0 0 18px #ffe45c,0 0 40px #d99b00;
+}
+
+/* GALÁXIA */
+.skin-galaxy .balao-corpo{
+    background:
+        radial-gradient(circle at 25% 25%,#fff 0 3%,transparent 4%),
+        radial-gradient(circle at 70% 60%,#fff 0 2%,transparent 3%),
+        radial-gradient(circle at 55% 20%,#8df 0 3%,transparent 4%),
+        linear-gradient(135deg,#09052c,#4421a5 45%,#101b69 70%,#030314);
+    box-shadow:0 0 18px #765cff,0 0 45px #3020a0;
+}
+
+/* PLASMA */
+.skin-plasma .balao-corpo{
+    background:
+        repeating-linear-gradient(
+            120deg,
+            #fff 0 3px,
+            #ff39ff 4px 9px,
+            #631cff 10px 17px
+        );
+    box-shadow:0 0 20px #ff39ff,0 0 45px #6920ff;
+}
+
+/* INFERNAL */
+.skin-infernal .balao-corpo{
+    background:
+        radial-gradient(circle at 50% 80%,#ffff55 0 8%,transparent 9%),
+        linear-gradient(135deg,#ffcf33,#ff4b00 50%,#8b0000);
+    box-shadow:0 0 18px #ff5a00,0 0 45px #d00000;
+}
+
+/* GOLEM */
+.skin-golem .balao-corpo{
+    background:
+        radial-gradient(circle at 25% 25%,#9e9e9e 0 5%,transparent 6%),
+        radial-gradient(circle at 70% 60%,#555 0 7%,transparent 8%),
+        linear-gradient(135deg,#aaa,#5c5c62 55%,#29292e);
+    border:3px solid #777;
+    border-radius:43% 48% 45% 47%;
+    box-shadow:0 0 12px #aaa,0 0 30px rgba(180,180,180,.3);
+}
+
+.skin-golem .balao-extra:before,
+.skin-golem .balao-extra:after{
+    content:"";
+    position:absolute;
+    width:9px;
+    height:9px;
+    top:25px;
+    background:#ffe75a;
+    border-radius:50%;
+    box-shadow:0 0 10px #ffb300;
+}
+
+.skin-golem .balao-extra:before{left:17px;}
+.skin-golem .balao-extra:after{right:17px;}
+
+/* DRAGÃO */
+.skin-dragon .balao-corpo{
+    background:
+        radial-gradient(circle at 25% 30%,#ffb000 0 5%,transparent 6%),
+        linear-gradient(135deg,#ff5945,#a70000 55%,#480000);
+    border:2px solid #ff9d00;
+    box-shadow:0 0 18px #ff3d00,0 0 40px rgba(255,80,0,.5);
+}
+
+.skin-dragon .balao-extra:before{
+    content:"🐲";
+    position:absolute;
+    font-size:25px;
+    left:19px;
+    top:13px;
+    filter:drop-shadow(0 0 5px #ff6600);
+}
+
+/* CEIFADOR */
+.skin-reaper .balao-corpo{
+    background:
+        radial-gradient(circle at 50% 35%,#f4f4ff 0 4%,transparent 5%),
+        linear-gradient(135deg,#34344f,#0a0a14 65%,#020205);
+    border:2px solid #7777ff;
+    box-shadow:0 0 15px #6868ff,0 0 45px rgba(80,60,255,.6);
+}
+
+.skin-reaper .balao-extra:before{
+    content:"☠";
+    position:absolute;
+    left:15px;
+    top:14px;
+    font-size:27px;
+    color:#e9e9ff;
+    text-shadow:0 0 10px #8888ff;
+}
+
+.skin-reaper .balao-extra:after{
+    content:"⚔";
+    position:absolute;
+    right:-13px;
+    top:18px;
+    color:#aaaaff;
+    font-size:22px;
+    transform:rotate(-25deg);
+}
+
+/* ================= PODER VÓRTEX ================= */
+
+.vortex-effect{
+    position:absolute;
+    width:1px;
+    height:1px;
+    z-index:35;
+    pointer-events:none;
+    transform:translate(-50%,-50%);
+}
+
+.vortex-ring{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:75px;
+    height:75px;
+    border:4px solid rgba(155,120,255,.85);
+    border-radius:50%;
+    transform:translate(-50%,-50%) scale(.2);
+    box-shadow:0 0 15px rgba(130,90,255,.9), inset 0 0 15px rgba(255,255,255,.25);
+    animation:vortexExpand .7s ease-out forwards;
+}
+
+.vortex-ring-2{
+    width:125px;
+    height:125px;
+    border-width:3px;
+    animation-delay:.08s;
+}
+
+.vortex-ring-3{
+    width:175px;
+    height:175px;
+    border-width:2px;
+    animation-delay:.16s;
+}
+
+.vortex-particle{
+    position:absolute;
+    left:50%;
+    top:50%;
+    font-size:20px;
+    font-weight:bold;
+    text-shadow:0 0 10px rgba(180,150,255,1);
+    animation:vortexSpin .65s ease-out forwards;
+    transform:translate(-50%,-50%) rotate(var(--angulo)) translateX(15px) scale(.4);
+}
+
+@keyframes vortexExpand{
+    0%{opacity:0;transform:translate(-50%,-50%) scale(.2) rotate(0deg);}
+    35%{opacity:1;}
+    100%{opacity:0;transform:translate(-50%,-50%) scale(2.5) rotate(180deg);}
+}
+
+@keyframes vortexSpin{
+    0%{opacity:0;transform:translate(-50%,-50%) rotate(var(--angulo)) translateX(15px) scale(.4);}
+    25%{opacity:1;}
+    100%{opacity:0;transform:translate(-50%,-50%) rotate(calc(var(--angulo) + 360deg)) translateX(var(--raio)) scale(1.1);}
+}
+
+/* ================= OBSTÁCULOS ================= */
+
+.obstaculo{
+    position:absolute;
+    z-index:10;
+    pointer-events:none;
+}
+
+.bomba{
+    font-size:36px;
+}
+
+.agulha{
+    width:8px;
+    height:48px;
+    border-radius:5px;
+    background:linear-gradient(#ffffff,#d8d8e8 35%,#777);
+    box-shadow:0 0 8px white;
+}
+
+.agulha:after{
+    content:"";
+    position:absolute;
+    bottom:-9px;
+    left:-5px;
+    border-left:9px solid transparent;
+    border-right:9px solid transparent;
+    border-top:13px solid #aaa;
+}
+
+.bola-fogo{
+    font-size:35px;
+    filter:drop-shadow(0 0 10px #ff5500);
+}
+
+.filhote{
+    position:absolute;
+    font-size:38px;
+    filter:drop-shadow(0 0 8px #ff5a00);
+    pointer-events:none;
+}
+
+/* ================= CHEFES ================= */
+
+#chefe{
+    position:absolute;
+    z-index:15;
+    width:190px;
+    height:155px;
+    left:50%;
+    top:115px;
+    transform:translateX(-50%);
+    transition:filter .2s;
+}
+
+.boss-aura{
+    position:absolute;
+    inset:-25px;
+    border-radius:50%;
+    opacity:.65;
+    animation:aura 1.8s infinite alternate;
+}
+
+@keyframes aura{
+    from{transform:scale(.9);opacity:.35;}
+    to{transform:scale(1.1);opacity:.7;}
+}
+
+/* GOLEM */
+.boss-golem .boss-aura{
+    background:radial-gradient(circle,#8b8b8b,transparent 65%);
+}
+
+.golem-cabeca{
+    position:absolute;
+    width:105px;
+    height:85px;
+    left:42px;
+    top:30px;
+    background:
+        radial-gradient(circle at 30% 25%,#999 0 8%,transparent 9%),
+        radial-gradient(circle at 70% 70%,#333 0 10%,transparent 11%),
+        linear-gradient(135deg,#999,#4b4b4f);
+    border:5px solid #303035;
+    border-radius:25px 25px 35px 35px;
+    box-shadow:0 10px 0 #252529,0 0 20px #aaa;
+}
+
+.golem-cabeca:before,
+.golem-cabeca:after{
+    content:"";
+    position:absolute;
+    width:18px;
+    height:14px;
+    top:30px;
+    background:#ffdf45;
+    border-radius:5px;
+    box-shadow:0 0 15px #ffb000;
+}
+
+.golem-cabeca:before{left:20px;}
+.golem-cabeca:after{right:20px;}
+
+.golem-braco{
+    position:absolute;
+    width:45px;
+    height:90px;
+    top:45px;
+    background:linear-gradient(#777,#29292d);
+    border:5px solid #29292d;
+    border-radius:25px;
+}
+
+.golem-braco.esq{
+    left:0;
+    transform:rotate(18deg);
+}
+
+.golem-braco.dir{
+    right:0;
+    transform:rotate(-18deg);
+}
+
+.golem-nucleo{
+    position:absolute;
+    width:30px;
+    height:30px;
+    left:80px;
+    top:88px;
+    border-radius:50%;
+    background:#ffe55c;
+    box-shadow:0 0 15px #ffb000,0 0 30px #ffb000;
+}
+
+/* DRAGÃO */
+.boss-dragon .boss-aura{
+    background:radial-gradient(circle,#ff4d00,transparent 65%);
+}
+
+.dragon-cabeca{
+    position:absolute;
+    width:115px;
+    height:90px;
+    left:38px;
+    top:35px;
+    background:linear-gradient(145deg,#ff623c,#a50000 70%);
+    border:4px solid #500000;
+    border-radius:55% 45% 40% 45%;
+    box-shadow:0 0 25px #ff4500;
+}
+
+.dragon-cabeca:before,
+.dragon-cabeca:after{
+    content:"";
+    position:absolute;
+    width:35px;
+    height:25px;
+    background:#ffb000;
+    border-radius:50%;
+    top:27px;
+    box-shadow:0 0 12px #ff6500;
+}
+
+.dragon-cabeca:before{left:18px;}
+.dragon-cabeca:after{right:18px;}
+
+.dragon-chifre{
+    position:absolute;
+    width:18px;
+    height:42px;
+    background:#f1c47a;
+    top:5px;
+    border-radius:15px;
+}
+
+.dragon-chifre.esq{
+    left:55px;
+    transform:rotate(-25deg);
+}
+
+.dragon-chifre.dir{
+    right:55px;
+    transform:rotate(25deg);
+}
+
+.dragon-asa{
+    position:absolute;
+    width:85px;
+    height:70px;
+    top:45px;
+    background:linear-gradient(135deg,#c51f12,#520000);
+    clip-path:polygon(0 0,100% 35%,75% 50%,100% 100%,35% 65%);
+}
+
+.dragon-asa.esq{left:-5px;}
+.dragon-asa.dir{
+    right:-5px;
+    transform:scaleX(-1);
+}
+
+.dragon-fogo{
+    position:absolute;
+    left:75px;
+    top:115px;
+    font-size:40px;
+    animation:fogoBoss .4s infinite alternate;
+}
+
+@keyframes fogoBoss{
+    from{transform:scale(.85);}
+    to{transform:scale(1.1);}
+}
+
+/* CEIFADOR */
+.boss-reaper .boss-aura{
+    background:radial-gradient(circle,#615cff,#100f35,transparent 68%);
+}
+
+.reaper-capa{
+    position:absolute;
+    width:120px;
+    height:120px;
+    left:35px;
+    top:28px;
+    background:
+        linear-gradient(145deg,#25254a,#050509 65%);
+    border:3px solid #6f70ff;
+    clip-path:polygon(50% 0,82% 25%,100% 100%,0 100%,18% 25%);
+    box-shadow:0 0 30px #5755ff;
+}
+
+.reaper-capuz{
+    position:absolute;
+    width:75px;
+    height:80px;
+    left:57px;
+    top:20px;
+    border-radius:50% 50% 42% 42%;
+    background:linear-gradient(#20203b,#050509);
+    border:3px solid #7677ff;
+    z-index:2;
+}
+
+.reaper-olho{
+    position:absolute;
+    width:18px;
+    height:7px;
+    background:#9b9cff;
+    top:55px;
+    box-shadow:0 0 14px #7777ff;
+    z-index:4;
+}
+
+.reaper-olho.esq{
+    left:70px;
+    transform:rotate(10deg);
+}
+
+.reaper-olho.dir{
+    left:101px;
+    transform:rotate(-10deg);
+}
+
+.reaper-foice{
+    position:absolute;
+    right:-5px;
+    top:18px;
+    width:10px;
+    height:130px;
+    background:#aaa;
+    transform:rotate(25deg);
+    box-shadow:0 0 10px #aaa;
+}
+
+.reaper-foice:before{
+    content:"";
+    position:absolute;
+    width:65px;
+    height:55px;
+    right:-10px;
+    top:-10px;
+    border:9px solid #d7d7ff;
+    border-left:0;
+    border-bottom:0;
+    border-radius:0 60px 0 0;
+    transform:rotate(-20deg);
+}
+
+/* ================= BARRA CHEFE ================= */
+
+#barraChefe{
+    position:absolute;
+    width:220px;
+    height:13px;
+    top:85px;
+    left:50%;
+    transform:translateX(-50%);
+    border:2px solid white;
+    border-radius:20px;
+    overflow:hidden;
+    z-index:30;
+    background:#222;
+}
+
+#vidaChefe{
+    width:100%;
+    height:100%;
+    background:linear-gradient(90deg,#ff2525,#ff8a00);
+}
+
+/* ================= PODER ================= */
+
+.projetil{
+    position:absolute;
+    z-index:25;
+    pointer-events:none;
+}
+
+.tiro-normal{
+    width:9px;
+    height:28px;
+    background:#fff;
+    border-radius:8px;
+    box-shadow:0 0 12px #fff,0 0 20px #7cf;
+}
+
+.tiro-laser{
+    width:14px;
+    height:55px;
+    background:#6ff;
+    border-radius:10px;
+    box-shadow:0 0 15px #0ff,0 0 35px #0ff;
+}
+
+/* ================= DIAMANTES ================= */
+
+.diamante-coletavel{
+    font-size:30px;
+    z-index:18;
+    filter:drop-shadow(0 0 8px #7ee7ff) drop-shadow(0 0 16px #4db8ff);
+    animation:diamanteFlutuar .75s ease-in-out infinite alternate;
+}
+
+@keyframes diamanteFlutuar{
+    from{transform:translateY(-2px) scale(1);}
+    to{transform:translateY(3px) scale(1.08);}
+}
+
+/* ================= LOJA DE MOEDAS E DIAMANTES ================= */
+
+.economia-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+    margin-top:12px;
+}
+
+.economia-card{
+    background:rgba(20,20,45,.9);
+    border:1px solid #444;
+    border-radius:20px;
+    padding:18px 12px;
+    text-align:center;
+}
+
+.economia-card .icone{
+    font-size:42px;
+    margin-bottom:8px;
+}
+
+.economia-card h3{
+    margin-bottom:6px;
+}
+
+.economia-card p{
+    color:#aaa;
+    font-size:13px;
+    min-height:32px;
+}
+
+.economia-card button{
+    width:100%;
+    margin-top:10px;
+    padding:11px;
+    border-radius:12px;
+    background:linear-gradient(135deg,#555,#333);
+    color:#fff;
+    font-weight:bold;
+}
+
+/* ================= REVIVER ================= */
+
+#reviverInfo{
+    margin:15px 0;
+    padding:12px;
+    border-radius:14px;
+    background:rgba(30,30,65,.8);
+    border:1px solid rgba(126,231,255,.25);
+}
+
+#botaoReviver{
+    background:linear-gradient(135deg,#20b7ff,#6c5cff);
+    box-shadow:0 0 22px rgba(75,190,255,.35);
+}
+
+#botaoReviver:disabled{
+    opacity:.45;
+    filter:grayscale(.5);
+}
+
+#poderStatus{
+    position:absolute;
+    left:50%;
+    top:105px;
+    transform:translateX(-50%);
+    z-index:40;
+    background:rgba(0,0,0,.55);
+    border-radius:15px;
+    padding:5px 12px;
+    font-size:12px;
+}
+
+/* ================= CONTROLES ================= */
+
+#controles{
+    position:absolute;
+    bottom:20px;
+    left:0;
+    right:0;
+    z-index:100;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:14px;
+    pointer-events:none;
+}
+
+#controles #botaoPoder{
+    pointer-events:auto;
+}
+
+#areaJogo{
+    touch-action:none;
+    cursor:grab;
+}
+
+#areaJogo:active{
+    cursor:grabbing;
+}
+
+#balao{
+    will-change:transform;
+}
+
+.controle{
+    width:72px;
+    height:62px;
+    border-radius:20px;
+    background:rgba(35,35,70,.9);
+    color:white;
+    font-size:28px;
+    border:2px solid rgba(255,255,255,.2);
+    box-shadow:0 5px 15px rgba(0,0,0,.3);
+    touch-action:none;
+    -webkit-touch-callout:none;
+    -webkit-user-select:none;
+    user-select:none;
+}
+
+.controle:active{
+    transform:scale(.94);
+    background:#5149a5;
+}
+
+#botaoPoder{
+    width:82px;
+    height:70px;
+    border-radius:50%;
+    background:linear-gradient(135deg,#ffca28,#ff6f00);
+    font-size:28px;
+    box-shadow:0 0 20px rgba(255,150,0,.6);
+}
+
+#botaoPoder:disabled{
+    opacity:.3;
+    filter:grayscale(1);
+}
+
+/* ================= GAME OVER ================= */
+
+#gameOver{
+    display:none;
+    position:absolute;
+    inset:0;
+    z-index:200;
+    background:rgba(0,0,0,.82);
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+}
+
+.game-card{
+    width:90%;
+    max-width:360px;
+    padding:28px;
+    border-radius:25px;
+    background:#101026;
+    border:1px solid #555;
+}
+
+.game-card h2{
+    font-size:35px;
+    margin-bottom:15px;
+    color:#ff536d;
+}
+
+.game-card p{
+    margin:8px;
+}
+
+/* ================= LOJA ================= */
+
+#loja,
+#bosses,
+#economiaLoja{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:300;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior:contain;
+    touch-action:pan-y;
+    background:
+        radial-gradient(circle at 50% 0%,#30275e,#080812 70%);
+    padding:20px;
+}
+
+.pagina{
+    width:100%;
+    max-width:600px;
+    margin:auto;
+    padding-bottom:30px;
+}
+
+.titulo-pagina{
+    text-align:center;
+    font-size:32px;
+    margin:10px 0 20px;
+}
+
+.moedas{
+    text-align:center;
+    color:#ffd740;
+    margin-bottom:20px;
+}
+
+.skins-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+}
+
+.skin-card{
+    background:rgba(20,20,45,.9);
+    border:1px solid #444;
+    border-radius:20px;
+    padding:15px;
+    text-align:center;
+}
+
+.preview{
+    width:70px;
+    height:70px;
+    margin:5px auto 10px;
+    position:relative;
+}
+
+.preview .balao-corpo{
+    left:7px;
+    top:3px;
+}
+
+.skin-card h3{
+    font-size:15px;
+    margin-bottom:5px;
+}
+
+.skin-card p{
+    color:#aaa;
+    font-size:12px;
+    margin-bottom:8px;
+}
+
+.skin-btn{
+    width:100%;
+    padding:9px;
+    border-radius:10px;
+    background:#5745c5;
+    color:white;
+    font-weight:bold;
+}
+
+.voltar{
+    width:100%;
+    margin-top:20px;
+    padding:14px;
+    border-radius:15px;
+    background:#292942;
+    color:white;
+    font-weight:bold;
+}
+
+/* ================= GALERIA ================= */
+
+.boss-grid{
+    display:grid;
+    gap:18px;
+}
+
+.boss-card{
+    position:relative;
+    overflow:hidden;
+    background:linear-gradient(145deg,rgba(24,24,55,.95),rgba(8,8,20,.95));
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:25px;
+    padding:18px;
+}
+
+.boss-card h2{
+    text-align:center;
+    margin:10px 0;
+}
+
+.boss-card p{
+    color:#c5c5d5;
+    line-height:1.45;
+    font-size:14px;
+    margin:6px 0;
+}
+
+.boss-visual{
+    height:190px;
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transform:scale(.9);
+}
+
+.boss-visual #chefe{
+    position:relative;
+    top:auto;
+    left:auto;
+    transform:scale(1.15);
+}
+
+.tag{
+    display:inline-block;
+    padding:5px 9px;
+    border-radius:20px;
+    background:#312e60;
+    color:#ddd;
+    font-size:11px;
+    margin:3px;
+}
+
+.info-btn{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border-radius:12px;
+    background:linear-gradient(135deg,#654cff,#9b45d8);
+    color:white;
+    font-weight:bold;
+}
+
+#bossModal{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:500;
+    background:rgba(0,0,0,.85);
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
+
+.modal-card{
+    width:100%;
+    max-width:430px;
+    max-height:90vh;
+    overflow-y:auto;
+    background:#111127;
+    border:1px solid #666;
+    border-radius:25px;
+    padding:22px;
+}
+
+.modal-card h2{
+    text-align:center;
+    margin-bottom:15px;
+}
+
+.modal-card p{
+    color:#ccc;
+    line-height:1.5;
+    margin:10px 0;
+}
+
+.fechar{
+    width:100%;
+    padding:13px;
+    border-radius:12px;
+    background:#343450;
+    color:white;
+    margin-top:10px;
+}
+
+/* ================= EXPLOSÃO ================= */
+
+.explosao{
+    position:absolute;
+    width:20px;
+    height:20px;
+    border-radius:50%;
+    background:#fff;
+    z-index:150;
+    pointer-events:none;
+    animation:explodir .5s forwards;
+}
+
+@keyframes explodir{
+    to{
+        width:130px;
+        height:130px;
+        margin-left:-55px;
+        margin-top:-55px;
+        opacity:0;
+        box-shadow:0 0 50px #ff9800;
+    }
+}
+
+@media(max-height:650px){
+    #balao{bottom:85px;}
+    #controles{bottom:8px;}
+    .controle{height:55px;}
+}
+
+/* ====== MODO 2 JOGADORES ====== */
+.modo-dupla-btn{border-color:#ffd54a!important;background:linear-gradient(135deg,#3a315e,#17172f)!important}
+/* CORREÇÕES 2P / PAUSA / INVENTÁRIO */
+#jogo.modo-dupla #balao{left:0!important;transform:translate3d(var(--p1x,0px),0,0)!important}
+#jogo.modo-dupla #balao2{transform:translate3d(var(--p2x,0px),0,0)!important}
+#pauseBtn{position:absolute;right:12px;top:82px;z-index:120;pointer-events:auto;padding:9px 13px;border-radius:12px;background:rgba(20,20,45,.92);border:1px solid rgba(255,255,255,.25);color:white;font-weight:bold;font-size:13px}
+#pauseOverlay{display:none;position:absolute;inset:0;z-index:500;background:rgba(0,0,0,.72);align-items:center;justify-content:center;text-align:center}
+#pauseOverlay .pause-card{width:90%;max-width:360px;padding:28px;border-radius:24px;background:#101026;border:1px solid #555}
+#pauseOverlay h2{font-size:32px;margin-bottom:15px}
+.pause-card button{width:100%;padding:14px;border-radius:14px;margin-top:9px;color:white;font-weight:bold;font-size:16px;background:linear-gradient(135deg,#654cff,#9d4edd)}
+#inventarioPoderes{position:absolute;left:12px;bottom:94px;z-index:110;display:flex;gap:6px;pointer-events:none;max-width:48vw;flex-wrap:wrap}
+.slot-poder{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:22px;background:rgba(15,15,35,.92);border:2px solid rgba(255,255,255,.22);box-shadow:0 0 10px rgba(125,92,255,.25);animation:poderPulse 1s infinite alternate}
+.slot-poder:first-child{border-color:#ffd54a;transform:scale(1.08)}
+@keyframes poderPulse{from{filter:brightness(1)}to{filter:brightness(1.35) drop-shadow(0 0 7px #8f7cff)}}
+.coin-visual{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 35% 30%,#fff29a 0 12%,#ffd54a 13% 45%,#c88900 46% 100%);border:2px solid #ffe082;box-shadow:0 0 10px rgba(255,190,30,.7);color:#8a5a00;font-weight:900;font-size:15px;line-height:1}
+.poder-coletavel{animation:powerFall .8s ease-in-out infinite alternate;filter:drop-shadow(0 0 8px #ffd54a)}
+.dupla-power{animation:powerFall .8s ease-in-out infinite alternate;filter:drop-shadow(0 0 8px #ffd54a)}
+@keyframes powerFall{from{transform:translateY(-3px) rotate(-5deg) scale(1)}to{transform:translateY(4px) rotate(5deg) scale(1.12)}}
+.projetil{animation:shotGlow .22s linear infinite alternate}
+@keyframes shotGlow{from{filter:brightness(1)}to{filter:brightness(1.8) drop-shadow(0 0 8px white)}}
+#jogo.modo-dupla #pauseBtn{top:82px}
+@media(max-width:600px){#inventarioPoderes{bottom:76px;max-width:65vw}.slot-poder{width:34px;height:34px;font-size:20px}}
+
+#duplaSetup{display:none;position:fixed;inset:0;z-index:450;background:radial-gradient(circle at 50% 0%,#30275e,#080812 75%);padding:20px;overflow-y:auto}
+.dupla-card{width:100%;max-width:720px;margin:auto;background:rgba(12,12,35,.96);border:1px solid rgba(255,255,255,.16);border-radius:28px;padding:22px;text-align:center}
+.dupla-skins{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:18px 0}
+.dupla-player{background:rgba(25,25,55,.9);border:1px solid #444;border-radius:20px;padding:15px}
+.dupla-player h2{margin-bottom:12px}
+.dupla-skin-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.dupla-skin{padding:8px;border-radius:12px;background:#292942;color:white;border:2px solid transparent;font-size:12px}
+.dupla-skin.selecionada{border-color:#ffd54a;box-shadow:0 0 15px rgba(255,213,74,.35)}
+.dupla-mini-balao{width:48px;height:58px;position:relative;margin:0 auto 6px;transform:scale(.72)}
+.dupla-mini-balao .balao-corpo{left:0;top:0}
+.dupla-mini-balao .balao-extra{left:0;top:0}
+.dupla-ready{width:100%;padding:15px;border-radius:15px;background:linear-gradient(135deg,#00a878,#00d4a0);color:white;font-weight:900;font-size:17px}
+.dupla-ready:disabled{opacity:.45}
+.dupla-controls{color:#aaa;font-size:13px;line-height:1.6;margin:8px 0 14px}
+#balao2{position:absolute;width:65px;height:82px;bottom:105px;left:50%;z-index:20;will-change:transform}
+#balao2 .balao-corpo{position:absolute}
+#balao2 .balao-extra{position:absolute}
+#balao2 .balao-no{position:absolute}
+#balao2 .balao-corda{position:absolute}
+#balao2.atingido{animation:duplaHit .18s linear 2}
+@keyframes duplaHit{50%{filter:brightness(2) drop-shadow(0 0 20px white)}}
+#duplaHUD{display:none;position:absolute;left:10px;right:10px;top:48px;z-index:60;justify-content:space-between;gap:10px;pointer-events:none}
+.dupla-hudbox{background:rgba(5,5,20,.8);border:1px solid rgba(255,255,255,.16);border-radius:12px;padding:6px 10px;font-size:12px}
+#duplaBossInfo{display:none;position:absolute;top:102px;left:50%;transform:translateX(-50%);z-index:60;background:rgba(0,0,0,.6);border-radius:14px;padding:5px 12px;font-weight:bold}
+.dupla-obstaculo{position:absolute;z-index:12;pointer-events:none;font-size:30px}
+.dupla-power{position:absolute;z-index:18;font-size:30px;pointer-events:none;filter:drop-shadow(0 0 8px #ffd54a)}
+#jogo.modo-dupla #botaoPoder{display:none}
+#jogo.modo-dupla #poderStatus{display:none}
+#jogo.modo-dupla #controles{display:none}
+#jogo.modo-dupla #balao{left:0!important;transform:translate3d(var(--p1x,0px),0,0)!important}
+@media(max-width:760px){.dupla-skins{grid-template-columns:1fr}.dupla-skin-grid{grid-template-columns:repeat(4,1fr)}}
+
+
+/* ===== 2P PATCH FINAL ===== */
+#jogo.modo-dupla #balao, #jogo.modo-dupla #balao2{
+  bottom:105px!important; left:0!important;
+  touch-action:none; user-select:none;
+  will-change:transform; z-index:25;
+}
+#jogo.modo-dupla #balao{transform:translate3d(var(--p1x,0px),0,0)!important}
+#jogo.modo-dupla #balao2{transform:translate3d(var(--p2x,0px),0,0)!important}
+.dupla-power{animation:duplaPowerFloat .55s ease-in-out infinite alternate, duplaPowerSpin 1.1s linear infinite; text-shadow:0 0 8px #fff,0 0 18px #ffd54a}
+@keyframes duplaPowerFloat{from{margin-top:-3px;filter:drop-shadow(0 0 5px #ffd54a)}to{margin-top:4px;filter:drop-shadow(0 0 14px #fff)}}
+@keyframes duplaPowerSpin{to{rotate:360deg}}
+.dupla-obstaculo{animation:duplaObstacleAnim .35s ease-in-out infinite alternate}
+@keyframes duplaObstacleAnim{from{transform:scale(.92) rotate(-3deg)}to{transform:scale(1.08) rotate(3deg)}}
+.dupla-dead{display:none!important;opacity:0!important;pointer-events:none!important}
+#duplaInventario{position:absolute;left:10px;right:10px;bottom:58px;z-index:100;display:flex;justify-content:space-between;pointer-events:none}
+.dupla-inv{display:flex;gap:4px;min-height:34px;max-width:45%;flex-wrap:wrap}
+.dupla-slot{width:31px;height:31px;border-radius:9px;background:rgba(0,0,0,.65);border:1px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:20px;animation:slotPop .25s ease-out}
+@keyframes slotPop{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+.dupla-hit-flash{animation:duplaHitFlash .3s linear 2!important}
+@keyframes duplaHitFlash{50%{filter:brightness(2.4) drop-shadow(0 0 22px white)}}
+#duplaGameOverMsg{display:none;position:absolute;inset:0;z-index:480;background:rgba(0,0,0,.72);align-items:center;justify-content:center;text-align:center}
+#duplaGameOverMsg .card{width:90%;max-width:380px;background:#101026;border:1px solid #555;border-radius:24px;padding:25px}
+#duplaGameOverMsg button{width:100%;margin-top:10px;padding:13px;border:0;border-radius:14px;color:white;font-weight:900;background:linear-gradient(135deg,#654cff,#9d4edd)}
+
+@keyframes powerBurst{0%{transform:scale(.4) translateY(15px);opacity:0}35%{transform:scale(1.25);opacity:1}100%{transform:scale(1.9) translateY(-55px);opacity:0}}
+
+
+/* ===== 2P CENÁRIOS POR BOSS + PROTEÇÃO ===== */
+#jogo.modo-dupla.cenario-2p-golem{background:radial-gradient(circle at 50% 45%,rgba(155,105,55,.35),transparent 28%),linear-gradient(180deg,#17100b 0%,#4b3020 52%,#090706 100%);}
+#jogo.modo-dupla.cenario-2p-dragon{background:radial-gradient(circle at 70% 20%,rgba(255,245,220,.9) 0 5%,transparent 17%),linear-gradient(180deg,#54b8ff 0%,#bdeaff 50%,#fff3d6 100%);}
+#jogo.modo-dupla.cenario-2p-reaper{background:radial-gradient(circle at 50% 42%,#4b1766 0%,#13081e 42%,#030207 100%);}
+#jogo.modo-dupla.cenario-2p-eagle{background:radial-gradient(circle at 50% 15%,rgba(255,255,255,.95) 0 4%,transparent 15%),linear-gradient(180deg,#183a66 0%,#426f9e 48%,#101a2d 100%);}
+#jogo.modo-dupla.cenario-2p-mister{background:radial-gradient(circle at 20% 30%,#7a3cff 0 2%,transparent 3%),radial-gradient(circle at 80% 65%,#23d8ff 0 2%,transparent 3%),radial-gradient(circle at 50% 40%,#32206e,transparent 45%),linear-gradient(180deg,#080b22,#1a103e 55%,#05030e);}
+#jogo.modo-dupla.cenario-2p-golem #areaJogo:before,#jogo.modo-dupla.cenario-2p-dragon #areaJogo:before,#jogo.modo-dupla.cenario-2p-reaper #areaJogo:before,#jogo.modo-dupla.cenario-2p-eagle #areaJogo:before,#jogo.modo-dupla.cenario-2p-mister #areaJogo:before{content:"";position:absolute;inset:0;pointer-events:none;z-index:1;opacity:.7;}
+#jogo.modo-dupla.cenario-2p-golem #areaJogo:before{background:radial-gradient(ellipse at 8% 18%,#76503a 0 8%,transparent 9%),radial-gradient(ellipse at 92% 25%,#553a2c 0 10%,transparent 11%),linear-gradient(transparent 75%,rgba(0,0,0,.45));}
+#jogo.modo-dupla.cenario-2p-dragon #areaJogo:before{background:radial-gradient(ellipse at 15% 25%,white 0 7%,transparent 18%),radial-gradient(ellipse at 85% 38%,white 0 9%,transparent 21%);}
+#jogo.modo-dupla.cenario-2p-reaper #areaJogo:before{background:radial-gradient(circle at 20% 30%,rgba(255,255,255,.5) 0 1px,transparent 2px),radial-gradient(circle at 75% 60%,rgba(255,255,255,.4) 0 1px,transparent 2px);}
+#jogo.modo-dupla.cenario-2p-eagle #areaJogo:before{background:repeating-linear-gradient(165deg,transparent 0 34px,rgba(220,245,255,.12) 35px 37px);}
+#jogo.modo-dupla.cenario-2p-mister #areaJogo:before{background:radial-gradient(circle at 15% 75%,rgba(100,220,255,.35),transparent 12%),radial-gradient(circle at 82% 18%,rgba(190,100,255,.3),transparent 14%);}
+.dupla-shield-ready{filter:drop-shadow(0 0 9px #ffe66d) drop-shadow(0 0 22px #fff);animation:duplaShieldPulse .7s ease-in-out infinite alternate!important;}
+@keyframes duplaShieldPulse{from{transform:scale(1)}to{transform:scale(1.08)}}
+.dupla-hit-protected{animation:duplaProtectedHit .55s ease-out!important;}
+@keyframes duplaProtectedHit{0%{filter:brightness(3) drop-shadow(0 0 8px #ffe66d)}45%{filter:brightness(2) drop-shadow(0 0 32px #fff09a)}100%{filter:brightness(1) drop-shadow(0 0 8px #ffe66d)}}
+.dupla-fx.shockwave{font-size:70px;animation:fxShockwave .7s ease-out forwards;}
+.dupla-fx.icefield{font-size:76px;animation:fxIceField .8s ease-out forwards;}
+.dupla-fx.tornado-burst{font-size:76px;animation:fxTornadoBurst .8s ease-out forwards;}
+.dupla-fx.trident-hit{font-size:48px;animation:fxTridentHit .55s ease-out forwards;}
+@keyframes fxShockwave{0%{transform:scale(.2);opacity:0}25%{opacity:1}100%{transform:scale(2.8);opacity:0}}
+@keyframes fxIceField{0%{transform:scale(.2) rotate(-10deg);opacity:0}25%{transform:scale(1.2);opacity:1}100%{transform:scale(2.5) rotate(15deg);opacity:0}}
+@keyframes fxTornadoBurst{0%{transform:scale(.2) rotate(0);opacity:0}30%{opacity:1}100%{transform:scale(2.7) rotate(600deg);opacity:0}}
+@keyframes fxTridentHit{0%{transform:translateY(90px) scale(.3);opacity:0}30%{opacity:1}100%{transform:translateY(-20px) scale(1.7);opacity:0}}
+
+/* ===== 2P POLIMENTO: PODERES, DIFICULDADE E CENÁRIO ===== */
+.dupla-fx{position:absolute;z-index:140;pointer-events:none;display:flex;align-items:center;justify-content:center;font-weight:900;}
+.dupla-fx.lightning{font-size:64px;animation:fxLightning .55s ease-out forwards;filter:drop-shadow(0 0 12px #fff) drop-shadow(0 0 28px #ffe45e);}
+.dupla-fx.trident{font-size:54px;animation:fxTrident .65s cubic-bezier(.2,.8,.2,1) forwards;filter:drop-shadow(0 0 12px #7de7ff);}
+.dupla-fx.tornado{font-size:58px;animation:fxTornado .75s ease-out forwards;filter:drop-shadow(0 0 12px #d8c7ff);}
+.dupla-fx.ice{font-size:62px;animation:fxIce .8s ease-out forwards;filter:drop-shadow(0 0 14px #8eeeff);}
+.dupla-fx.hit{font-size:30px;animation:fxHit .55s ease-out forwards;}
+@keyframes fxLightning{0%{transform:scale(.2) translateY(35px);opacity:0}25%{transform:scale(1.35);opacity:1}55%{transform:scale(.95);opacity:1}100%{transform:scale(1.8) translateY(-65px);opacity:0}}
+@keyframes fxTrident{0%{transform:translateY(40px) scale(.35) rotate(-18deg);opacity:0}20%{opacity:1}75%{transform:translateY(-170px) scale(1.15) rotate(8deg);opacity:1}100%{transform:translateY(-240px) scale(.65);opacity:0}}
+@keyframes fxTornado{0%{transform:scale(.2) rotate(0);opacity:0}25%{opacity:1}100%{transform:scale(2.1) rotate(420deg) translateY(-45px);opacity:0}}
+@keyframes fxIce{0%{transform:scale(.25);opacity:0}25%{transform:scale(1.35);opacity:1}100%{transform:scale(2.3);opacity:0}}
+@keyframes fxHit{0%{transform:scale(.3);opacity:0}35%{transform:scale(1.5);opacity:1}100%{transform:scale(2.2) translateY(-30px);opacity:0}}
+.dupla-obstaculo{font-size:32px;animation:duplaObstacleAnim .28s ease-in-out infinite alternate;filter:drop-shadow(0 0 5px rgba(255,255,255,.45));}
+.dupla-power{font-size:32px;animation:duplaPowerFloat .7s ease-in-out infinite alternate, duplaPowerSpin 1.4s linear infinite;}
+.dupla-power.raro{animation-duration:.9s,1.8s;filter:drop-shadow(0 0 10px #fff) drop-shadow(0 0 22px #7de7ff);}
+
+</style>
+</head>
+
+<body>
+
+<!-- ================= MENU ================= -->
+
+<div id="menu" class="tela">
+    <div class="painel-menu">
+
+        <div class="logo">🎈 PROTEJA</div>
+        <div class="subtitulo">O BALÃO</div>
+
+        <input id="nomeJogador" type="text" maxlength="15"
+               placeholder="Digite seu nome">
+
+        <button class="menu-btn" type="button" onclick="comecarJogo()">
+            🚀 COMEÇAR
+        </button>
+
+        <button class="menu-btn" type="button" onclick="abrirModo()">
+            🎮 MODO: <span id="modoMenu">CELULAR</span>
+        </button>
+
+        <button class="menu-btn" type="button" onclick="abrirDificuldade()">
+            ⚔️ DIFICULDADE
+        </button>
+
+        <button class="menu-btn" type="button" onclick="abrirLoja()">
+            🛒 LOJA DE SKINS
+        </button>
+
+        <button class="menu-btn" type="button" onclick="abrirEconomia()">
+            💎 LOJA DE MOEDAS & DIAMANTES
+        </button>
+
+        <button class="menu-btn" type="button" onclick="abrirBosses()">
+            👹 BOSSES & HISTÓRIAS
+        </button>
+
+        <div class="menu-info">
+            🏆 Recorde: <span id="recordeMenu">0</span>
+            &nbsp; | &nbsp;
+            🪙 Moedas: <span id="moedasMenu">0</span>
+            &nbsp; | &nbsp;
+            💎 Diamantes: <span id="diamantesMenu">0</span>
+        </div>
+
+        <div class="menu-info">
+            Dificuldade atual:
+            <strong id="dificuldadeMenu">FÁCIL</strong>
+            &nbsp; | &nbsp;
+            Modo:
+            <strong id="modoMenuInfo">CELULAR</strong>
+        </div>
+
+    </div>
+</div>
+
+<!-- ================= MODO DE JOGO ================= -->
+<div id="modoTela" class="tela" style="display:none;">
+    <div class="modo-card">
+        <h1>🎮 MODO DE JOGO</h1>
+        <p style="color:#aaa;margin-top:8px;">
+            Escolha como você vai jogar.
+        </p>
+
+        <div class="modo-opcoes">
+            <button id="modoCelular" class="modo-btn" type="button"
+                    onclick="selecionarModo('celular')">
+                <strong>📱</strong>
+                CELULAR
+                <small>Arraste o balão com o dedo e use o botão de poder.</small>
+            </button>
+
+            <button id="modoPC" class="modo-btn" type="button"
+                    onclick="selecionarModo('pc')">
+                <strong>🖥️</strong>
+                COMPUTADOR
+                <small>← → para mover e ↑ para usar o poder. Mais difícil.</small>
+            </button>
+
+            <button id="modoDupla" class="modo-btn modo-dupla-btn" type="button"
+                    onclick="selecionarModo('dupla')">
+                <strong>👥</strong>
+                2 JOGADORES
+                <small>Somente PC. P1: ← → ↑ • P2: A D W • 5 chefes × 5 níveis.</small>
+            </button>
+        </div>
+
+        <button class="menu-btn" type="button" onclick="confirmarModoEIniciar()">
+            🚀 JOGAR NESTE MODO
+        </button>
+
+        <button class="voltar" type="button" onclick="fecharModo()">
+            ⬅️ VOLTAR
+        </button>
+    </div>
+</div>
+
+<!-- ================= DIFICULDADE ================= -->
+
+<div id="dificuldadeTela" class="tela" style="display:none;">
+    <div class="painel-menu">
+        <h1>⚔️ DIFICULDADE</h1>
+        <br>
+
+        <button class="menu-btn" type="button"
+                onclick="selecionarDificuldade('facil')">
+            🟢 FÁCIL
+        </button>
+
+        <button class="menu-btn" type="button"
+                onclick="selecionarDificuldade('medio')">
+            🟡 MÉDIO
+        </button>
+
+        <button class="menu-btn" type="button"
+                onclick="selecionarDificuldade('dificil')">
+            🔴 DIFÍCIL
+        </button>
+
+        <button class="menu-btn" type="button"
+                onclick="selecionarDificuldade('extremo')">
+            ☠️ EXTREMO
+        </button>
+
+        <button class="voltar" type="button"
+                onclick="voltarMenu()">
+            ⬅️ VOLTAR
+        </button>
+    </div>
+</div>
+
+<!-- ================= LOJA ================= -->
+
+<div id="loja">
+    <div class="pagina">
+
+        <h1 class="titulo-pagina">🎨 LOJA DE SKINS</h1>
+
+        <div class="moedas">
+            🪙 Você tem <strong id="moedasLoja">0</strong> moedas
+        </div>
+
+        <div id="skinsGrid" class="skins-grid"></div>
+
+        <button class="voltar" type="button" onclick="fecharLoja()">
+            ⬅️ VOLTAR
+        </button>
+
+    </div>
+</div>
+
+<!-- ================= LOJA DE ECONOMIA ================= -->
+
+<div id="economiaLoja" style="display:none;">
+    <div class="pagina">
+
+        <h1 class="titulo-pagina">💎 LOJA</h1>
+
+        <div class="moedas">
+            🪙 Moedas: <strong id="economiaMoedas">0</strong>
+            &nbsp;&nbsp;|&nbsp;&nbsp;
+            💎 Diamantes: <strong id="economiaDiamantes">0</strong>
+        </div>
+
+        <div class="economia-grid">
+
+            <div class="economia-card">
+                <div class="icone">💎</div>
+                <h3>Pacote de Diamantes</h3>
+                <p>Diamantes para reviver e, futuramente, outros recursos.</p>
+                <button type="button" disabled>💰 PREÇO EM BREVE</button>
+            </div>
+
+            <div class="economia-card">
+                <div class="icone">🪙</div>
+                <h3>Pacote de Moedas</h3>
+                <p>Moedas para a loja de skins e futuras melhorias.</p>
+                <button type="button" disabled>💰 PREÇO EM BREVE</button>
+            </div>
+
+        </div>
+
+        <p style="text-align:center;color:#888;margin:18px 0;">
+            A compra real será configurada depois.
+        </p>
+
+        <button class="voltar" type="button" onclick="fecharEconomia()">
+            ⬅️ VOLTAR
+        </button>
+
+    </div>
+</div>
+
+<!-- ================= BOSSES ================= -->
+
+<div id="bosses">
+    <div class="pagina">
+
+        <h1 class="titulo-pagina">👹 BESTIÁRIO</h1>
+
+        <p style="text-align:center;color:#aaa;margin-bottom:20px;">
+            Conheça os guardiões das três fases.
+        </p>
+
+        <div class="boss-grid">
+
+            <!-- GOLEM -->
+            <div class="boss-card">
+
+                <div class="boss-visual">
+                    <div class="chefe boss-golem">
+                        <div class="boss-aura"></div>
+                        <div class="golem-braco esq"></div>
+                        <div class="golem-braco dir"></div>
+                        <div class="golem-cabeca"></div>
+                        <div class="golem-nucleo"></div>
+                    </div>
+                </div>
+
+                <h2>🗿 Golem Cósmico</h2>
+
+                <div style="text-align:center;">
+                    <span class="tag">FASE 1</span>
+                    <span class="tag">PEDRA</span>
+                    <span class="tag">FÁCIL</span>
+                </div>
+
+                <button class="info-btn" type="button"
+                        onclick="mostrarBoss('golem')">
+                    📖 VER HISTÓRIA
+                </button>
+
+            </div>
+
+            <!-- DRAGÃO -->
+            <div class="boss-card">
+
+                <div class="boss-visual">
+                    <div class="chefe boss-dragon">
+                        <div class="boss-aura"></div>
+                        <div class="dragon-asa esq"></div>
+                        <div class="dragon-asa dir"></div>
+                        <div class="dragon-chifre esq"></div>
+                        <div class="dragon-chifre dir"></div>
+                        <div class="dragon-cabeca"></div>
+                        <div class="dragon-fogo">🔥</div>
+                    </div>
+                </div>
+
+                <h2>🐉 Dragão de Lava</h2>
+
+                <div style="text-align:center;">
+                    <span class="tag">FASE 2</span>
+                    <span class="tag">LAVA</span>
+                    <span class="tag">MÉDIO</span>
+                </div>
+
+                <button class="info-btn" type="button"
+                        onclick="mostrarBoss('dragon')">
+                    📖 VER HISTÓRIA
+                </button>
+
+            </div>
+
+            <!-- REAPER -->
+            <div class="boss-card">
+
+                <div class="boss-visual">
+                    <div class="chefe boss-reaper">
+                        <div class="boss-aura"></div>
+                        <div class="reaper-capa"></div>
+                        <div class="reaper-capuz"></div>
+                        <div class="reaper-olho esq"></div>
+                        <div class="reaper-olho dir"></div>
+                        <div class="reaper-foice"></div>
+                    </div>
+                </div>
+
+                <h2>☠️ Ceifador Sombrio</h2>
+
+                <div style="text-align:center;">
+                    <span class="tag">FASE 3</span>
+                    <span class="tag">VOID</span>
+                    <span class="tag">DIFÍCIL</span>
+                </div>
+
+                <button class="info-btn" type="button"
+                        onclick="mostrarBoss('reaper')">
+                    📖 VER HISTÓRIA
+                </button>
+
+            </div>
+
+        </div>
+
+        <button class="voltar" type="button" onclick="fecharBosses()">
+            ⬅️ VOLTAR
+        </button>
+
+    </div>
+</div>
+
+<!-- ================= MODAL ================= -->
+
+<div id="bossModal">
+    <div class="modal-card">
+
+        <h2 id="modalTitulo"></h2>
+
+        <p id="modalOrigem"></p>
+        <p id="modalHistoria"></p>
+        <p id="modalPoderes"></p>
+        <p id="modalCuriosidade"></p>
+
+        <button class="fechar" type="button"
+                onclick="fecharModal()">
+            FECHAR
+        </button>
+
+    </div>
+</div>
+
+<!-- ================= JOGO ================= -->
+
+<div id="jogo">
+
+    <div id="hud">
+        <div class="hud-caixa">
+            👤 <span id="nomeHUD">Jogador</span>
+        </div>
+
+        <div class="hud-caixa">
+            ⭐ <span id="pontuacao">0</span>
+        </div>
+
+        <div class="hud-caixa">
+            🪙 <span id="moedasHUD">0</span>
+        </div>
+
+        <div class="hud-caixa">
+            💎 <span id="diamantesHUD">0</span>
+        </div>
+
+        <div class="hud-caixa">
+            <span id="fase">FASE 1</span>
+        </div>
+    </div>
+
+    <button id="pauseBtn" type="button" onclick="alternarPause()">⏸️ PAUSAR</button>
+    <div id="inventarioPoderes"></div>
+    <div id="poderStatus">⚡ Sem poder</div>
+
+    <div id="pauseOverlay">
+        <div class="pause-card">
+            <h2>⏸️ JOGO PAUSADO</h2>
+            <p>Você pode continuar ou sair da partida.</p>
+            <button type="button" onclick="alternarPause()">▶️ CONTINUAR</button>
+            <button type="button" onclick="sairDaPausa()">🏠 SAIR DA PARTIDA</button>
+        </div>
+    </div>
+
+    <div id="barraChefe">
+        <div id="vidaChefe"></div>
+    </div>
+
+    <div id="areaJogo">
+
+        <div id="balao" class="skin-normal">
+            <div class="balao-corpo"></div>
+            <div class="balao-extra"></div>
+            <div class="balao-no"></div>
+            <div class="balao-corda"></div>
+        </div>
+
+        <div id="chefe" style="display:none;"></div>
+
+    </div>
+
+    <div id="controles">
+
+        <button id="botaoPoder"
+                class="controle"
+                type="button"
+                disabled>
+            ⚡
+        </button>
+
+        <div class="pc-ajuda">
+            🖥️ ← → MOVER &nbsp; | &nbsp; ↑ USAR PODER
+        </div>
+    </div>
+
+    <div id="gameOver">
+        <div class="game-card">
+
+            <h2>💥 FIM DE JOGO</h2>
+
+            <p>⭐ Pontuação: <strong id="pontuacaoFinal">0</strong></p>
+            <p>🏆 Recorde: <strong id="recordeFinal">0</strong></p>
+            <p>🪙 Moedas: <strong id="moedasFinal">0</strong></p>
+            <p>💎 Diamantes: <strong id="diamantesFinal">0</strong></p>
+
+            <div id="reviverInfo">
+                💎 Reviver custa <strong>5 diamantes</strong>
+                <br>
+                <span id="diamantesReviver">Você tem 0</span>
+            </div>
+
+            <button id="botaoReviver" class="menu-btn"
+                    type="button" onclick="reviverJogador()">
+                💎 REVIVER — 5 DIAMANTES
+            </button>
+
+            <br>
+
+            <button class="menu-btn"
+                    type="button"
+                    onclick="reiniciarJogo()">
+                🔄 JOGAR NOVAMENTE
+            </button>
+
+            <button class="voltar"
+                    type="button"
+                    onclick="sairDoJogo()">
+                🏠 MENU
+            </button>
+
+        </div>
+    </div>
+
+</div>
+
+<script>
+/* =========================================================
+   DADOS
+========================================================= */
+
+var dadosSalvos = null;
+
+try{
+    dadosSalvos = JSON.parse(localStorage.getItem("dadosBalao"));
+}catch(e){
+    dadosSalvos = null;
+}
+
+if(!dadosSalvos){
+    dadosSalvos = {};
+}
+
+var dados = {
+    moedas:Number(dadosSalvos.moedas) || 0,
+    diamantes:Number(dadosSalvos.diamantes) || 0,
+    recorde:Number(dadosSalvos.recorde) || 0,
+    cor:dadosSalvos.cor || "normal",
+    coresCompradas:Array.isArray(dadosSalvos.coresCompradas)
+        ? dadosSalvos.coresCompradas
+        : ["normal"]
+};
+
+if(!dados.coresCompradas.includes("normal")){
+    dados.coresCompradas.push("normal");
+}
+
+var dificuldade = "facil";
+var nomeJogador = "Jogador";
+var modoJogo = "celular";
+
+var jogoRodando = false;
+var pontuacao = 0;
+var velocidadeBalao = 7;
+
+var moverEsquerda = false;
+var moverDireita = false;
+
+var intervaloMovimento = null;
+var intervaloInimigos = null;
+var intervaloPontuacao = null;
+var intervaloMoedas = null;
+var intervaloDiamantes = null;
+var intervaloPoderes = null;
+var intervaloEscudo = null;
+var intervaloBossAtaque = null;
+var intervaloBossMovimento = null;
+
+var escudoAtivo = false;
+var poderAtual = null;
+var filaPoderes = [];
+
+var faseAtual = 1;
+var chefeAtivo = false;
+var vidaChefe = 100;
+
+var tipoChefe = "";
+var bossExtremoIndex = 0;
+var invulneravelRevive = false;
+var jogoPausado = false;
+var geloAtivo = false;
+var geloAte = 0;
+
+var dificuldadeConfig = {
+
+    facil:{
+        nome:"FÁCIL",
+        inimigo:950,
+        velocidade:2.8,
+        escudo:15000,
+        poder:7500,
+        chefeAtaque:2200,
+        chefeVelocidade:5.0,
+        chefeVida:100
+    },
+
+    medio:{
+        nome:"MÉDIO",
+        inimigo:700,
+        velocidade:3.8,
+        escudo:18000,
+        poder:7000,
+        chefeAtaque:1900,
+        chefeVelocidade:5.8,
+        chefeVida:115
+    },
+
+    dificil:{
+        nome:"DIFÍCIL",
+        inimigo:400,
+        velocidade:5.8,
+        escudo:19000,
+        poder:6000,
+        chefeAtaque:1550,
+        chefeVelocidade:7.2,
+        chefeVida:140
+    },
+
+    extremo:{
+        nome:"EXTREMO",
+        inimigo:300,
+        velocidade:6.5,
+        escudo:17000,
+        poder:5000,
+        chefeAtaque:1150,
+        chefeVelocidade:8.2,
+        chefeVida:180
+    }
+
+};
+
+
+var skins = [
+
+    {
+        id:"normal",
+        nome:"Clássico",
+        preco:0,
+        descricao:"O balão original."
+    },
+
+    {
+        id:"ocean",
+        nome:"Oceano",
+        preco:30,
+        descricao:"Energia das profundezas."
+    },
+
+    {
+        id:"poison",
+        nome:"Veneno",
+        preco:50,
+        descricao:"Brilha como uma toxina."
+    },
+
+    {
+        id:"mystical",
+        nome:"Místico",
+        preco:70,
+        descricao:"Energia de outro mundo."
+    },
+
+    {
+        id:"gold",
+        nome:"Dourado",
+        preco:100,
+        descricao:"Brilha como ouro."
+    },
+
+    {
+        id:"galaxy",
+        nome:"Galáxia",
+        preco:150,
+        descricao:"Um pequeno universo."
+    },
+
+    {
+        id:"plasma",
+        nome:"Plasma",
+        preco:200,
+        descricao:"Energia pura."
+    },
+
+    {
+        id:"infernal",
+        nome:"Infernal",
+        preco:250,
+        descricao:"Calor das profundezas."
+    },
+
+    {
+        id:"golem",
+        nome:"Golem",
+        preco:0,
+        desbloqueio:"Derrote o Golem",
+        descricao:"Mini Golem Cósmico."
+    },
+
+    {
+        id:"dragon",
+        nome:"Dragão",
+        preco:0,
+        desbloqueio:"Derrote o Dragão",
+        descricao:"Essência do Dragão de Lava."
+    },
+
+    {
+        id:"reaper",
+        nome:"Ceifador",
+        preco:0,
+        desbloqueio:"Derrote o Ceifador",
+        descricao:"A aura do Ceifador Sombrio."
+    }
+
+];
+
+/* =========================================================
+   SALVAR
+========================================================= */
+
+function salvarDados(){
+
+    try{
+
+        localStorage.setItem(
+            "dadosBalao",
+            JSON.stringify(dados)
+        );
+
+    }catch(e){}
+
+}
+
+/* =========================================================
+   MENU
+========================================================= */
+
+function atualizarModoMenu(){
+    var texto=document.getElementById("modoMenu");
+    var textoInfo=document.getElementById("modoMenuInfo");
+    var nomeModo=modoJogo==="pc" ? "COMPUTADOR" : "CELULAR";
+
+    if(texto){
+        texto.textContent=nomeModo;
+    }
+
+    if(textoInfo){
+        textoInfo.textContent=nomeModo;
+    }
+
+    document.body.classList.toggle("modo-pc",modoJogo==="pc");
+
+    var celular=document.getElementById("modoCelular");
+    var pc=document.getElementById("modoPC");
+
+    if(celular){
+        celular.classList.toggle("selecionado",modoJogo==="celular");
+    }
+
+    if(pc){
+        pc.classList.toggle("selecionado",modoJogo==="pc");
+    }
+}
+
+function abrirModo(){
+    document.getElementById("menu").style.display="none";
+    document.getElementById("modoTela").style.display="flex";
+    atualizarModoMenu();
+}
+
+function selecionarModo(valor){
+    modoJogo=valor==="pc" ? "pc" : "celular";
+    atualizarModoMenu();
+}
+
+function confirmarModoEIniciar(){
+    document.getElementById("modoTela").style.display="none";
+    document.getElementById("jogo").style.display="block";
+    iniciarJogo();
+}
+
+function fecharModo(){
+    document.getElementById("modoTela").style.display="none";
+    document.getElementById("menu").style.display="flex";
+    atualizarMenu();
+}
+
+function obterConfigJogo(){
+    var base=dificuldadeConfig[dificuldade];
+
+    /* O PC tem uma configuração própria para compensar
+       a precisão e a facilidade do teclado. */
+    if(modoJogo==="pc"){
+        return {
+            inimigo:Math.max(180,Math.round(base.inimigo*0.62)),
+            velocidade:base.velocidade*1.22,
+            escudo:Math.round(base.escudo*1.25),
+            poder:Math.round(base.poder*1.35),
+            chefeAtaque:Math.max(650,Math.round(base.chefeAtaque*0.78)),
+            chefeVelocidade:base.chefeVelocidade*1.28,
+            chefeVida:Math.round((base.chefeVida||100)*1.25)
+        };
+    }
+
+    return base;
+}
+
+function atualizarMenu(){
+
+    document.getElementById("recordeMenu").textContent =
+        dados.recorde;
+
+    document.getElementById("moedasMenu").textContent =
+        dados.moedas;
+
+    document.getElementById("diamantesMenu").textContent =
+        dados.diamantes;
+
+    document.getElementById("dificuldadeMenu").textContent =
+        dificuldadeConfig[dificuldade].nome;
+}
+
+atualizarMenu();
+
+/* =========================================================
+   DIFICULDADE
+========================================================= */
+
+function abrirDificuldade(){
+
+    document.getElementById("menu").style.display="none";
+    document.getElementById("dificuldadeTela").style.display="flex";
+
+}
+
+function selecionarDificuldade(valor){
+
+    dificuldade=valor;
+
+    atualizarMenu();
+
+    document.getElementById("dificuldadeTela").style.display="none";
+    document.getElementById("menu").style.display="flex";
+
+}
+
+function voltarMenu(){
+
+    document.getElementById("dificuldadeTela").style.display="none";
+    document.getElementById("menu").style.display="flex";
+
+}
+
+/* =========================================================
+   LOJA
+========================================================= */
+
+function abrirLoja(){
+
+    document.getElementById("menu").style.display="none";
+    document.getElementById("loja").style.display="block";
+
+    atualizarLoja();
+
+}
+
+function fecharLoja(){
+
+    document.getElementById("loja").style.display="none";
+    document.getElementById("menu").style.display="flex";
+
+    atualizarMenu();
+
+}
+
+function atualizarLoja(){
+
+    document.getElementById("moedasLoja").textContent =
+        dados.moedas;
+
+    var grid=document.getElementById("skinsGrid");
+
+    grid.innerHTML="";
+
+    for(var i=0;i<skins.length;i++){
+
+        var skin=skins[i];
+
+        var comprada=dados.coresCompradas.includes(skin.id);
+
+        var selecionada=dados.cor===skin.id;
+
+        var card=document.createElement("div");
+        card.className="skin-card";
+
+        var preview=document.createElement("div");
+        preview.className="preview skin-"+skin.id;
+
+        var corpo=document.createElement("div");
+        corpo.className="balao-corpo";
+
+        var extra=document.createElement("div");
+        extra.className="balao-extra";
+
+        preview.appendChild(corpo);
+        preview.appendChild(extra);
+
+        card.appendChild(preview);
+
+        var titulo=document.createElement("h3");
+        titulo.textContent=skin.nome;
+
+        card.appendChild(titulo);
+
+        var desc=document.createElement("p");
+        desc.textContent=skin.descricao;
+
+        card.appendChild(desc);
+
+        var botao=document.createElement("button");
+        botao.type="button";
+        botao.className="skin-btn";
+
+        if(selecionada){
+
+            botao.textContent="✅ EQUIPADA";
+
+        }else if(comprada){
+
+            botao.textContent="🎈 EQUIPAR";
+
+            botao.onclick=(function(id){
+                return function(){
+                    equiparSkin(id);
+                };
+            })(skin.id);
+
+        }else if(skin.desbloqueio){
+
+            botao.textContent="🔒 "+skin.desbloqueio;
+            botao.disabled=true;
+
+        }else{
+
+            botao.textContent="🪙 COMPRAR "+skin.preco;
+
+            botao.onclick=(function(id,preco){
+                return function(){
+                    comprarSkin(id,preco);
+                };
+            })(skin.id,skin.preco);
+
+        }
+
+        card.appendChild(botao);
+
+        grid.appendChild(card);
+
+    }
+
+}
+
+function comprarSkin(id,preco){
+
+    if(dados.moedas<preco){
+
+        alert("Você precisa de mais moedas! 🪙");
+        return;
+
+    }
+
+    dados.moedas-=preco;
+
+    dados.coresCompradas.push(id);
+
+    dados.cor=id;
+
+    salvarDados();
+
+    atualizarLoja();
+
+}
+
+function equiparSkin(id){
+
+    if(!dados.coresCompradas.includes(id)){
+        return;
+    }
+
+    dados.cor=id;
+
+    salvarDados();
+
+    atualizarLoja();
+
+}
+
+/* =========================================================
+   LOJA DE ECONOMIA
+========================================================= */
+
+function abrirEconomia(){
+
+    document.getElementById("menu").style.display="none";
+    document.getElementById("economiaLoja").style.display="block";
+    atualizarEconomia();
+
+}
+
+function fecharEconomia(){
+
+    document.getElementById("economiaLoja").style.display="none";
+    document.getElementById("menu").style.display="flex";
+    atualizarMenu();
+
+}
+
+function atualizarEconomia(){
+
+    document.getElementById("economiaMoedas").textContent=dados.moedas;
+    document.getElementById("economiaDiamantes").textContent=dados.diamantes;
+
+}
+
+/* =========================================================
+   APLICAR SKIN
+========================================================= */
+
+function aplicarSkin(){
+
+    var balao=document.getElementById("balao");
+
+    balao.className="skin-"+dados.cor;
+
+}
+
+/* =========================================================
+   BOSSES
+========================================================= */
+
+var bossesInfo={
+
+    golem:{
+        titulo:"🗿 Golem Cósmico",
+        origem:"Origem: nasceu de um fragmento de uma estrela que caiu em um antigo templo espacial.",
+        historia:"Durante milhares de anos ele permaneceu adormecido. Quando o Balão atravessou o Portal Astral, o fragmento despertou e transformou a própria pedra em um gigantesco guardião.",
+        poderes:"Poderes: força absurda, núcleo cósmico e capacidade de invocar rochas espaciais.",
+        curiosidade:"Curiosidade: dizem que seu núcleo guarda uma pequena estrela viva."
+    },
+
+    dragon:{
+        titulo:"🐉 Dragão de Lava",
+        origem:"Origem: nasceu no coração de um vulcão que entrou em erupção durante uma tempestade mágica.",
+        historia:"O Dragão protege o Vale de Magma. Seus filhotes também patrulham os céus e não gostam de visitantes. Ao chegar nesta fase, você precisa enfrentar toda a família.",
+        poderes:"Poderes: fogo, voo, rajadas de calor e comando sobre seus filhotes.",
+        curiosidade:"Curiosidade: os filhotes ainda não controlam perfeitamente suas chamas."
+    },
+
+    reaper:{
+        titulo:"☠️ Ceifador Sombrio",
+        origem:"Origem: surgiu no Void, um lugar entre dimensões onde a luz e o tempo quase não existem.",
+        historia:"Ninguém sabe seu verdadeiro nome. Ele aparece quando alguém chega longe demais no território proibido. Diferente dos outros chefes, ele não protege tesouros: ele protege o próprio portal.",
+        poderes:"Poderes: chamas sombrias, teleporte, ataques rápidos e controle da energia do Void.",
+        curiosidade:"Curiosidade: sua foice não é feita de metal. Ela é formada por energia condensada."
+    }
+
+};
+
+function abrirBosses(){
+
+    document.getElementById("menu").style.display="none";
+    document.getElementById("bosses").style.display="block";
+
+}
+
+function fecharBosses(){
+
+    document.getElementById("bosses").style.display="none";
+    document.getElementById("menu").style.display="flex";
+
+}
+
+function mostrarBoss(tipo){
+
+    var info=bossesInfo[tipo];
+
+    document.getElementById("modalTitulo").textContent=info.titulo;
+    document.getElementById("modalOrigem").textContent=info.origem;
+    document.getElementById("modalHistoria").textContent=info.historia;
+    document.getElementById("modalPoderes").textContent=info.poderes;
+    document.getElementById("modalCuriosidade").textContent=info.curiosidade;
+
+    document.getElementById("bossModal").style.display="flex";
+
+}
+
+function fecharModal(){
+
+    document.getElementById("bossModal").style.display="none";
+
+}
+
+/* =========================================================
+   COMEÇAR JOGO
+========================================================= */
+
+function comecarJogo(){
+
+    var input=document.getElementById("nomeJogador");
+
+    nomeJogador=input.value.trim();
+
+    if(nomeJogador===""){
+        nomeJogador="Jogador";
+    }
+
+    /* O botão COMEÇAR usa o modo atualmente selecionado.
+       Para trocar, use o botão MODO no menu. */
+    document.getElementById("menu").style.display="none";
+    document.getElementById("jogo").style.display="block";
+
+    atualizarModoMenu();
+    iniciarJogo();
+
+}
+
+/* =========================================================
+   INICIAR
+========================================================= */
+
+function iniciarJogo(){
+
+    /* Limpa completamente a partida anterior antes de começar outra.
+       Isso evita bombas, poderes, projéteis e efeitos duplicados. */
+    limparIntervalos();
+    limparInimigos();
+
+    var chefeAnterior=document.getElementById("chefe");
+    if(chefeAnterior){
+        chefeAnterior.style.display="none";
+        chefeAnterior.className="";
+        chefeAnterior.innerHTML="";
+    }
+
+    var jogoTela=document.getElementById("jogo");
+    jogoTela.classList.remove(
+        "cenario-golem",
+        "cenario-dragon",
+        "cenario-reaper"
+    );
+
+    moverEsquerda=false;
+    moverDireita=false;
+    jogoRodando=true;
+
+    atualizarModoMenu();
+
+    pontuacao=0;
+    faseAtual=1;
+    chefeAtivo=false;
+    vidaChefe=100;
+    bossExtremoIndex=0;
+    escudoAtivo=false;
+    invulneravelRevive=false;
+    jogoPausado=false;
+    geloAtivo=false;
+    geloAte=0;
+    var po=document.getElementById("pauseOverlay"); if(po) po.style.display="none";
+    poderAtual=null;
+    filaPoderes=[];
+
+    document.getElementById("gameOver").style.display="none";
+
+    document.getElementById("pontuacao").textContent="0";
+    document.getElementById("nomeHUD").textContent=nomeJogador;
+    document.getElementById("moedasHUD").textContent=dados.moedas;
+    document.getElementById("diamantesHUD").textContent=dados.diamantes;
+    document.getElementById("fase").textContent="FASE 1";
+
+    document.getElementById("barraChefe").style.display="none";
+    atualizarPoderStatus();
+
+    aplicarSkin();
+
+    posicionarBalao();
+
+    iniciarMovimento();
+
+    iniciarPontuacao();
+
+    iniciarInimigos();
+
+    iniciarMoedas();
+
+    iniciarDiamantes();
+
+    iniciarPoderes();
+
+    iniciarEscudo();
+
+    tocarSomInicio();
+
+}
+
+/* =========================================================
+   MOVIMENTO DO BALÃO — TOUCH / MOUSE / TECLADO
+   Versão otimizada: não usa offsetLeft a cada frame.
+========================================================= */
+
+var frameMovimento = null;
+var ultimoTempoMovimento = 0;
+var balaoX = 0;
+var arrastandoBalao = false;
+var ponteiroBalaoId = null;
+
+function limitarBalaoX(x){
+    var balao=document.getElementById("balao");
+    var area=document.getElementById("areaJogo");
+
+    if(!balao || !area){
+        return x;
+    }
+
+    var maxX=Math.max(5,area.clientWidth-balao.offsetWidth-5);
+
+    if(x<5) x=5;
+    if(x>maxX) x=maxX;
+
+    return x;
+}
+
+function aplicarPosicaoBalao(){
+    var balao=document.getElementById("balao");
+    if(!balao){
+        return;
+    }
+
+    /* Transform evita recalcular o layout inteiro do jogo. */
+    balao.style.left="0px";
+    balao.style.transform="translate3d("+balaoX+"px,0,0)";
+}
+
+function iniciarMovimento(){
+
+    if(frameMovimento){
+        cancelAnimationFrame(frameMovimento);
+        frameMovimento=null;
+    }
+
+    var area=document.getElementById("areaJogo");
+    var balao=document.getElementById("balao");
+
+    if(area && balao){
+        balaoX=(area.clientWidth-balao.offsetWidth)/2;
+        balaoX=limitarBalaoX(balaoX);
+        aplicarPosicaoBalao();
+    }
+
+    ultimoTempoMovimento=performance.now();
+
+    function atualizar(tempo){
+
+        if(!jogoRodando){
+            frameMovimento=null;
+            return;
+        }
+
+        if(jogoPausado){
+            ultimoTempoMovimento=tempo;
+            frameMovimento=requestAnimationFrame(atualizar);
+            return;
+        }
+
+        var delta=(tempo-ultimoTempoMovimento)/1000;
+        ultimoTempoMovimento=tempo;
+
+        if(delta>0.05){
+            delta=0.05;
+        }
+
+        var velocidadePorSegundo=velocidadeBalao*60;
+
+        if(moverEsquerda){
+            balaoX-=velocidadePorSegundo*delta;
+        }
+
+        if(moverDireita){
+            balaoX+=velocidadePorSegundo*delta;
+        }
+
+        balaoX=limitarBalaoX(balaoX);
+        aplicarPosicaoBalao();
+
+        frameMovimento=requestAnimationFrame(atualizar);
+    }
+
+    frameMovimento=requestAnimationFrame(atualizar);
+}
+
+function posicionarBalao(){
+    var balao=document.getElementById("balao");
+    var area=document.getElementById("areaJogo");
+
+    if(!balao || !area){
+        return;
+    }
+
+    balaoX=(area.clientWidth-balao.offsetWidth)/2;
+    balaoX=limitarBalaoX(balaoX);
+    aplicarPosicaoBalao();
+}
+
+function pararMovimento(){
+    moverEsquerda=false;
+    moverDireita=false;
+}
+
+/* ================= TOUCH / MOUSE ================= */
+
+var arrastandoBalao = false;
+var ponteiroBalaoId = null;
+var inicioArrastoX = 0;
+var inicioArrastoY = 0;
+var deslocamentoBalaoX = 0;
+var distanciaMinimaArrasto = 8;
+
+function moverBalaoParaPonteiro(e){
+    var area=document.getElementById("areaJogo");
+    var balao=document.getElementById("balao");
+
+    if(!area || !balao || !jogoRodando){
+        return;
+    }
+
+    var rect=area.getBoundingClientRect();
+
+    balaoX=(e.clientX-rect.left)-deslocamentoBalaoX;
+    balaoX=limitarBalaoX(balaoX);
+    aplicarPosicaoBalao();
+}
+
+var areaControle=document.getElementById("areaJogo");
+
+if(areaControle){
+    areaControle.addEventListener("pointerdown",function(e){
+        if(!jogoRodando || modoJogo==="pc"){
+            return;
+        }
+
+        if(e.target && e.target.closest && e.target.closest("button")){
+            return;
+        }
+
+        var rect=areaControle.getBoundingClientRect();
+        var balao=document.getElementById("balao");
+
+        if(!balao){
+            return;
+        }
+
+        inicioArrastoX=e.clientX;
+        inicioArrastoY=e.clientY;
+
+        var centroBalao=balaoX+balao.offsetWidth/2;
+        deslocamentoBalaoX=(e.clientX-rect.left)-centroBalao;
+
+        arrastandoBalao=false;
+        ponteiroBalaoId=e.pointerId;
+        pararMovimento();
+
+        try{
+            areaControle.setPointerCapture(e.pointerId);
+        }catch(err){}
+    },{passive:false});
+
+    areaControle.addEventListener("pointermove",function(e){
+        if(ponteiroBalaoId===null || e.pointerId!==ponteiroBalaoId){
+            return;
+        }
+
+        var distanciaX=Math.abs(e.clientX-inicioArrastoX);
+        var distanciaY=Math.abs(e.clientY-inicioArrastoY);
+
+        if(!arrastandoBalao){
+            if(distanciaX<distanciaMinimaArrasto && distanciaY<distanciaMinimaArrasto){
+                return;
+            }
+            arrastandoBalao=true;
+        }
+
+        e.preventDefault();
+        moverBalaoParaPonteiro(e);
+    },{passive:false});
+
+    function terminarArrasto(e){
+        if(e.pointerId!==ponteiroBalaoId){
+            return;
+        }
+
+        arrastandoBalao=false;
+        ponteiroBalaoId=null;
+        inicioArrastoX=0;
+        inicioArrastoY=0;
+        deslocamentoBalaoX=0;
+        pararMovimento();
+    }
+
+    areaControle.addEventListener("pointerup",terminarArrasto);
+    areaControle.addEventListener("pointercancel",terminarArrasto);
+    areaControle.addEventListener("lostpointercapture",function(){
+        arrastandoBalao=false;
+        ponteiroBalaoId=null;
+        inicioArrastoX=0;
+        inicioArrastoY=0;
+        deslocamentoBalaoX=0;
+    });
+}
+
+/* ================= TECLADO NO COMPUTADOR ================= */
+window.addEventListener("keydown",function(e){
+
+    if(!jogoRodando || jogoPausado || arrastandoBalao){
+        return;
+    }
+
+    var tecla=e.key.toLowerCase();
+
+    if(modoJogo!=="pc"){
+        return;
+    }
+
+    if(e.key==="ArrowLeft" || tecla==="a"){
+        e.preventDefault();
+        moverEsquerda=true;
+        moverDireita=false;
+    }
+
+    if(e.key==="ArrowRight" || tecla==="d"){
+        e.preventDefault();
+        moverDireita=true;
+        moverEsquerda=false;
+    }
+
+    if(e.key==="ArrowUp"){
+        e.preventDefault();
+
+        /* Evita gastar vários poderes segurando a seta. */
+        if(!e.repeat && modoJogo==="pc" && poderAtual){
+            usarPoder();
+        }
+    }
+});
+
+window.addEventListener("keyup",function(e){
+
+    var tecla=e.key.toLowerCase();
+
+    if(e.key==="ArrowLeft" || tecla==="a"){
+        moverEsquerda=false;
+    }
+
+    if(e.key==="ArrowRight" || tecla==="d"){
+        moverDireita=false;
+    }
+});
+
+window.addEventListener("keydown",function(e){
+    if(e.key==="Escape" && (jogoRodando || jogoPausado)){
+        e.preventDefault();
+        alternarPause();
+    }
+});
+
+window.addEventListener("blur",function(){
+    arrastandoBalao=false;
+    ponteiroBalaoId=null;
+    pararMovimento();
+});
+
+window.addEventListener("resize",function(){
+    if(jogoRodando){
+        balaoX=limitarBalaoX(balaoX);
+        aplicarPosicaoBalao();
+    }
+});
+
+
+/* =========================================================
+   PONTUAÇÃO
+========================================================= */
+
+function iniciarPontuacao(){
+
+    intervaloPontuacao=setInterval(function(){
+
+        if(!jogoRodando || jogoPausado){
+            return;
+        }
+
+        pontuacao++;
+
+        document.getElementById("pontuacao").textContent=
+            pontuacao;
+
+        atualizarFase();
+
+    },1000);
+
+}
+
+/* =========================================================
+   FASES
+========================================================= */
+
+function atualizarFase(){
+
+    var novaFase;
+
+    if(pontuacao<60){
+        novaFase=1;
+    }else if(pontuacao<120){
+        novaFase=2;
+    }else{
+        novaFase=3;
+    }
+
+    if(novaFase!==faseAtual){
+
+        faseAtual=novaFase;
+
+        document.getElementById("fase").textContent=
+            "FASE "+faseAtual;
+
+        if(faseAtual===3){
+            iniciarChefe();
+        }
+
+    }
+
+}
+
+/* =========================================================
+   INIMIGOS
+========================================================= */
+
+function iniciarInimigos(){
+
+    intervaloInimigos=setInterval(function(){
+
+        if(!jogoRodando || jogoPausado || chefeAtivo){
+            return;
+        }
+
+        if(faseAtual===1){
+            criarBomba();
+        }
+
+        if(faseAtual===2){
+            criarAgulha();
+            criarFilhoteDragon();
+        }
+
+        if(faseAtual===3){
+            criarBolaFogo();
+        }
+
+    },obterConfigJogo().inimigo);
+
+}
+
+/* =========================================================
+   BOMBA
+========================================================= */
+
+function criarBomba(){
+
+    var area=document.getElementById("areaJogo");
+
+    var bomba=document.createElement("div");
+
+    bomba.className="obstaculo bomba";
+    bomba.textContent="💣";
+
+    bomba.style.left=
+        Math.random()*(area.clientWidth-45)+"px";
+
+    bomba.style.top="-50px";
+
+    area.appendChild(bomba);
+
+    var y=-50;
+
+    var velocidade=
+        obterConfigJogo().velocidade;
+
+    var movimento=setInterval(function(){
+
+        if(!jogoRodando || jogoPausado || !bomba.parentNode){
+
+            clearInterval(movimento);
+            return;
+
+        }
+
+        y+=velocidade;
+        bomba.style.top=y+"px";
+
+        if(colisao(bomba)){
+
+            clearInterval(movimento);
+
+            if(bomba.parentNode){
+                bomba.remove();
+            }
+
+            sofrerDano();
+
+            return;
+        }
+
+        if(y>area.clientHeight+60){
+
+            clearInterval(movimento);
+
+            if(bomba.parentNode){
+                bomba.remove();
+            }
+
+        }
+
+    },16);
+
+}
+
+/* =========================================================
+   AGULHAS
+========================================================= */
+
+function criarAgulha(){
+
+    var area=document.getElementById("areaJogo");
+
+    var agulha=document.createElement("div");
+
+    agulha.className="obstaculo agulha";
+
+    agulha.style.left=
+        Math.random()*(area.clientWidth-15)+"px";
+
+    agulha.style.top="-60px";
+
+    area.appendChild(agulha);
+
+    var y=-60;
+
+    var velocidade=
+        obterConfigJogo().velocidade+1;
+
+    var movimento=setInterval(function(){
+
+        if(!jogoRodando || jogoPausado || !agulha.parentNode){
+
+            clearInterval(movimento);
+            return;
+
+        }
+
+        y+=velocidade;
+
+        agulha.style.top=y+"px";
+
+        if(colisao(agulha)){
+
+            clearInterval(movimento);
+
+            if(agulha.parentNode){
+                agulha.remove();
+            }
+
+            sofrerDano();
+
+            return;
+
+        }
+
+        if(y>area.clientHeight+70){
+
+            clearInterval(movimento);
+
+            if(agulha.parentNode){
+                agulha.remove();
+            }
+
+        }
+
+    },16);
+
+}
+
+/* =========================================================
+   FILHOTES DE DRAGÃO
+========================================================= */
+
+function criarFilhoteDragon(){
+
+    var area=document.getElementById("areaJogo");
+
+    var filhote=document.createElement("div");
+
+    filhote.className="obstaculo filhote";
+    filhote.textContent="🐲";
+
+    var lado=Math.random()<.5;
+
+    var x;
+
+    if(lado){
+        x=-50;
+    }else{
+        x=area.clientWidth+10;
+    }
+
+    var y=160+Math.random()*180;
+
+    filhote.style.left=x+"px";
+    filhote.style.top=y+"px";
+
+    area.appendChild(filhote);
+
+    var velocidade=
+        dificuldade==="dificil" ? 5.2 :
+        dificuldade==="medio" ? 4 :
+        3;
+
+    var direcao=lado ? 1 : -1;
+
+    var movimento=setInterval(function(){
+
+        if(!jogoRodando || jogoPausado || !filhote.parentNode){
+
+            clearInterval(movimento);
+            return;
+
+        }
+
+        x+=velocidade*direcao;
+
+        filhote.style.left=x+"px";
+
+        if(colisao(filhote)){
+
+            clearInterval(movimento);
+
+            if(filhote.parentNode){
+                filhote.remove();
+            }
+
+            sofrerDano();
+
+            return;
+
+        }
+
+        if(x<-80 || x>area.clientWidth+80){
+
+            clearInterval(movimento);
+
+            if(filhote.parentNode){
+                filhote.remove();
+            }
+
+        }
+
+    },16);
+
+}
+
+/* =========================================================
+   FOGO
+========================================================= */
+
+function criarBolaFogo(){
+
+    var area=document.getElementById("areaJogo");
+
+    var fogo=document.createElement("div");
+
+    fogo.className="obstaculo bola-fogo";
+    fogo.textContent="🔥";
+
+    fogo.style.left=
+        Math.random()*(area.clientWidth-45)+"px";
+
+    fogo.style.top="-55px";
+
+    area.appendChild(fogo);
+
+    var y=-55;
+
+    var velocidade=
+        obterConfigJogo().velocidade+1.5;
+
+    var movimento=setInterval(function(){
+
+        if(!jogoRodando || jogoPausado || !fogo.parentNode){
+
+            clearInterval(movimento);
+            return;
+
+        }
+
+        y+=velocidade;
+
+        fogo.style.top=y+"px";
+
+        if(colisao(fogo)){
+
+            clearInterval(movimento);
+
+            if(fogo.parentNode){
+                fogo.remove();
+            }
+
+            sofrerDano();
+
+            return;
+
+        }
+
+        if(y>area.clientHeight+60){
+
+            clearInterval(movimento);
+
+            if(fogo.parentNode){
+                fogo.remove();
+            }
+
+        }
+
+    },16);
+
+}
+
+/* =========================================================
+   COLISÃO
+========================================================= */
+
+function colisao(objeto){
+
+    if(escudoAtivo || invulneravelRevive){
+        return false;
+    }
+
+    var b=document.getElementById("balao")
+        .getBoundingClientRect();
+
+    var o=objeto.getBoundingClientRect();
+
+    var centroBX=b.left+b.width/2;
+    var centroBY=b.top+b.height/2;
+
+    var centroOX=o.left+o.width/2;
+    var centroOY=o.top+o.height/2;
+
+    var dx=centroBX-centroOX;
+    var dy=centroBY-centroOY;
+
+    var distancia=Math.sqrt(dx*dx+dy*dy);
+
+    return distancia<42;
+
+}
+
+/* =========================================================
+   DANO
+========================================================= */
+
+function sofrerDano(){
+
+    if(escudoAtivo || invulneravelRevive){
+        return;
+    }
+
+    /* O poder de gelo NÃO protege contra o objeto. Ele transforma
+       a próxima colisão em uma penalidade: o balão fica lento por 2s. */
+    if(geloAtivo){
+        geloAtivo=false;
+        geloAte=performance.now()+2000;
+        var b=document.getElementById("balao");
+        if(b){
+            b.classList.add("atingido");
+            b.style.filter="hue-rotate(160deg) brightness(1.5)";
+            setTimeout(function(){if(b.parentNode){b.classList.remove("atingido");b.style.filter="";}},2000);
+        }
+        atualizarPoderStatus();
+        return;
+    }
+
+    criarExplosao();
+    terminarJogo();
+
+}
+
+/* =========================================================
+   MOEDAS
+========================================================= */
+
+function iniciarMoedas(){
+
+    intervaloMoedas=setInterval(function(){
+
+        if(!jogoRodando || jogoPausado || chefeAtivo){
+            return;
+        }
+
+        criarMoeda();
+
+    },9000);
+
+}
+
+function criarMoeda(){
+
+    var area=document.getElementById("areaJogo");
+
+    var moeda=document.createElement("div");
+
+    moeda.className="obstaculo coin-visual";
+    moeda.textContent="★";
+    moeda.setAttribute("aria-label","Moeda");
+
+    var x=Math.random()*(area.clientWidth-35);
+    var y=-40;
+
+    moeda.style.left=x+"px";
+    moeda.style.top=y+"px";
+
+    area.appendChild(moeda);
+
+    var movimento=setInterval(function(){
+
+        if(!jogoRodando || jogoPausado || !moeda.parentNode){
+
+            clearInterval(movimento);
+            return;
+
+        }
+
+        y+=3;
+
+        moeda.style.top=y+"px";
+
+        if(colisaoSemEscudo(moeda)){
+
+            dados.moedas++;
+
+            document.getElementById("moedasHUD").textContent=
+                dados.moedas;
+
+            salvarDados();
+
+            moeda.remove();
+            clearInterval(movimento);
+
+            return;
+
+        }
+
+        if(y>area.clientHeight){
+
+            moeda.remove();
+            clearInterval(movimento);
+
+        }
+
+    },16);
+
+}
+
+/* =========================================================
+   DIAMANTES — MUITO RAROS
+========================================================= */
+
+function iniciarDiamantes(){
+
+    intervaloDiamantes=setInterval(function(){
+
+        if(!jogoRodando || jogoPausado){
+            return;
+        }
+
+        /* Só tenta gerar de tempos em tempos e com baixa chance.
+           Em média aparece um diamante a cada ~40-60 segundos. */
+        if(Math.random()<0.38){
+            criarDiamante();
+        }
+
+    },16000);
+
+}
+
+function criarDiamante(){
+
+    var area=document.getElementById("areaJogo");
+
+    if(area.querySelector(".diamante-coletavel")){
+        return;
+    }
+
+    var diamante=document.createElement("div");
+    diamante.className="obstaculo diamante-coletavel";
+    diamante.textContent="💎";
+
+    var x=Math.random()*Math.max(1,area.clientWidth-40);
+    var y=-45;
+
+    diamante.style.left=x+"px";
+    diamante.style.top=y+"px";
+    area.appendChild(diamante);
+
+    var movimento=setInterval(function(){
+
+        if(!jogoRodando || jogoPausado || !diamante.parentNode){
+            clearInterval(movimento);
+            return;
+        }
+
+        y+=2.25;
+        diamante.style.top=y+"px";
+
+        if(colisaoSemEscudo(diamante)){
+
+            dados.diamantes++;
+
+            document.getElementById("diamantesHUD").textContent=dados.diamantes;
+
+            salvarDados();
+
+            diamante.remove();
+            clearInterval(movimento);
+
+            return;
+        }
+
+        if(y>area.clientHeight+50){
+            diamante.remove();
+            clearInterval(movimento);
+        }
+
+    },16);
+
+}
+
+/* =========================================================
+   COLISÃO SEM ESCUDO
+========================================================= */
+
+function colisaoSemEscudo(objeto){
+
+    var b=document.getElementById("balao")
+        .getBoundingClientRect();
+
+    var o=objeto.getBoundingClientRect();
+
+    return !(
+        b.right<o.left ||
+        b.left>o.right ||
+        b.bottom<o.top ||
+        b.top>o.bottom
+    );
+
+}
+
+/* =========================================================
+   ESCUDO
+========================================================= */
+
+function iniciarEscudo(){
+
+    intervaloEscudo=setInterval(function(){
+
+        if(!jogoRodando || jogoPausado || chefeAtivo){
+            return;
+        }
+
+        ativarEscudo();
+
+    },obterConfigJogo().escudo);
+
+}
+
+function ativarEscudo(){
+
+    escudoAtivo=true;
+
+    var balao=document.getElementById("balao");
+
+    balao.style.filter=
+        "drop-shadow(0 0 15px #00eaff) drop-shadow(0 0 30px #00eaff)";
+
+    setTimeout(function(){
+
+        escudoAtivo=false;
+
+        balao.style.filter="";
+
+    },4500);
+
+}
+
+/* =========================================================
+   PODERES
+========================================================= */
+
+function iniciarPoderes(){
+
+    intervaloPoderes=setInterval(function(){
+
+        if(!jogoRodando || jogoPausado){
+            return;
+        }
+
+        criarPowerUp();
+
+    },obterConfigJogo().poder);
+
+}
+
+function criarPowerUp(){
+
+    var area=document.getElementById("areaJogo");
+
+    /* Durante o BOSS, só aparecem poderes que causam dano.
+       Assim o jogador sempre consegue atacar o chefe. */
+    var poderes=chefeAtivo
+        ? ["⚡","🔱","🌀"]
+        : ["⚡","🔱","🌀","❄️"];
+
+    var tipo=
+        poderes[Math.floor(Math.random()*poderes.length)];
+
+    var poder=document.createElement("div");
+
+    poder.className="obstaculo poder-coletavel";
+
+    poder.textContent=tipo;
+
+    poder.style.fontSize="32px";
+
+    var x=Math.random()*(area.clientWidth-40);
+    var y=-40;
+
+    poder.style.left=x+"px";
+    poder.style.top=y+"px";
+
+    area.appendChild(poder);
+
+    var movimento=setInterval(function(){
+
+        if(!jogoRodando || jogoPausado || !poder.parentNode){
+
+            clearInterval(movimento);
+            return;
+
+        }
+
+        y+=3;
+
+        poder.style.top=y+"px";
+
+        if(colisaoSemEscudo(poder)){
+
+            filaPoderes.push(tipo);
+            poderAtual=filaPoderes[0];
+
+            atualizarPoderStatus();
+
+            poder.remove();
+
+            clearInterval(movimento);
+
+            return;
+
+        }
+
+        if(y>area.clientHeight){
+
+            poder.remove();
+            clearInterval(movimento);
+
+        }
+
+    },16);
+
+}
+
+function atualizarPoderStatus(){
+
+    var botao=document.getElementById("botaoPoder");
+    var status=document.getElementById("poderStatus");
+
+    if(!filaPoderes.length){
+        poderAtual=null;
+        botao.disabled=true;
+        botao.textContent="⚡";
+        status.textContent="⚡ Sem poder";
+        var inv0=document.getElementById("inventarioPoderes"); if(inv0) inv0.innerHTML="";
+        return;
+    }
+
+    poderAtual=filaPoderes[0];
+    botao.disabled=false;
+    botao.textContent=poderAtual;
+    status.textContent="PODER: "+poderAtual+(filaPoderes.length>1 ? "  x"+filaPoderes.length : "");
+    var inv=document.getElementById("inventarioPoderes");
+    if(inv){
+        inv.innerHTML="";
+        for(var i=0;i<filaPoderes.length;i++){
+            var slot=document.createElement("div");
+            slot.className="slot-poder";
+            slot.textContent=filaPoderes[i];
+            inv.appendChild(slot);
+        }
+    }
+
+}
+
+/* botão central */
+document.getElementById("botaoPoder")
+    .addEventListener("click",function(){
+
+        if(!jogoRodando || !poderAtual){
+            return;
+        }
+
+        usarPoder();
+
+    });
+
+/* =========================================================
+   USAR PODER
+========================================================= */
+
+function usarPoder(){
+
+    if(!filaPoderes.length){
+        atualizarPoderStatus();
+        return;
+    }
+
+    /* Usa sempre o poder mais antigo da fila. */
+    var poder=filaPoderes.shift();
+
+    poderAtual=filaPoderes.length ? filaPoderes[0] : null;
+
+    atualizarPoderStatus();
+
+    if(poder==="⚡"){
+        dispararLaser();
+    }
+
+    if(poder==="🔱"){
+        dispararTriplo();
+    }
+
+    if(poder==="🌀"){
+        dispararVortex();
+    }
+
+    if(poder==="❄️"){
+        congelarInimigos();
+    }
+
+}
+
+/* =========================================================
+   TIRO
+========================================================= */
+
+function dispararLaser(){
+
+    criarProjetil(
+        "tiro-laser",
+        12,
+        function(tiro){
+
+            if(chefeAtivo && !tiro.dataset.acertouChefe){
+                tiro.dataset.acertouChefe="sim";
+                danoChefe(35);
+                if(tiro.parentNode){
+                    tiro.remove();
+                }
+                return;
+            }
+
+            destruirPrimeiroObstaculo(tiro);
+
+        }
+    );
+
+}
+
+function dispararTriplo(){
+
+    function criarTiroTriplo(){
+        criarProjetil("tiro-normal",7,function(tiro){
+
+            if(chefeAtivo && !tiro.dataset.acertouChefe){
+                tiro.dataset.acertouChefe="sim";
+                danoChefe(18);
+                if(tiro.parentNode){
+                    tiro.remove();
+                }
+                return;
+            }
+
+            destruirPrimeiroObstaculo(tiro);
+
+        });
+    }
+
+    criarTiroTriplo();
+
+    setTimeout(function(){
+        if(jogoRodando){
+            criarTiroTriplo();
+        }
+    },130);
+
+    setTimeout(function(){
+        if(jogoRodando){
+            criarTiroTriplo();
+        }
+    },260);
+
+}
+
+function dispararVortex(){
+
+    var area=document.getElementById("areaJogo");
+    var balao=document.getElementById("balao");
+
+    if(!area || !balao){
+        return;
+    }
+
+    var r=balao.getBoundingClientRect();
+    var centroX=r.left+r.width/2;
+    var centroY=r.top+r.height/2;
+
+    /* ===============================
+       EFEITO VISUAL DO REDEMOINHO
+       =============================== */
+    var vortex=document.createElement("div");
+    vortex.className="vortex-effect";
+    vortex.style.left=(balao.offsetLeft+balao.offsetWidth/2)+"px";
+    vortex.style.top=(balao.offsetTop+balao.offsetHeight/2)+"px";
+
+    for(var anel=0;anel<3;anel++){
+        var ring=document.createElement("div");
+        ring.className="vortex-ring vortex-ring-"+(anel+1);
+        vortex.appendChild(ring);
+    }
+
+    var particulas=["✦","✧","•","✦","✧","•","✦","✧"];
+    for(var p=0;p<particulas.length;p++){
+        var part=document.createElement("span");
+        part.className="vortex-particle";
+        part.textContent=particulas[p];
+        part.style.setProperty("--angulo",(p*45)+"deg");
+        part.style.setProperty("--raio",(55+(p%3)*22)+"px");
+        vortex.appendChild(part);
+    }
+
+    area.appendChild(vortex);
+
+    setTimeout(function(){
+        if(vortex.parentNode){
+            vortex.remove();
+        }
+    },800);
+
+    /* ===============================
+       EMPURRAR OS OBSTÁCULOS PARA LONGE
+       =============================== */
+    var objetos=area.querySelectorAll(".obstaculo");
+
+    for(var i=0;i<objetos.length;i++){
+
+        var obj=objetos[i];
+        var o=obj.getBoundingClientRect();
+
+        var x=o.left+o.width/2;
+        var y=o.top+o.height/2;
+
+        var dx=x-centroX;
+        var dy=y-centroY;
+        var distancia=Math.sqrt(dx*dx+dy*dy);
+
+        /* Se estiver exatamente no centro, escolhe uma direção. */
+        if(distancia<1){
+            var angulo=Math.random()*Math.PI*2;
+            dx=Math.cos(angulo);
+            dy=Math.sin(angulo);
+            distancia=1;
+        }
+
+        /* Obstáculos mais próximos recebem um empurrão maior. */
+        var forca=1.55;
+        if(distancia<180){
+            forca=2.35;
+        }
+
+        var moverX=(dx/distancia)*Math.max(180,260*forca);
+        var moverY=(dy/distancia)*Math.max(180,260*forca);
+        var rotacao=(Math.random()*900-450);
+
+        obj.style.transition="transform .55s cubic-bezier(.15,.8,.25,1), opacity .55s ease";
+        obj.style.transform="translate("+moverX+"px,"+moverY+"px) rotate("+rotacao+"deg) scale(.65)";
+        obj.style.opacity="0";
+
+        (function(item){
+            setTimeout(function(){
+                if(item.parentNode){
+                    item.remove();
+                }
+            },580);
+        })(obj);
+    }
+
+    /* O redemoinho também acerta o chefe. */
+    if(chefeAtivo){
+        danoChefe(40);
+    }
+
+}
+
+function congelarInimigos(){
+
+    /* Ativa a armadilha: a próxima colisão não mata; deixa o balão
+       lento por 2 segundos. */
+    geloAtivo=true;
+    atualizarPoderStatus();
+
+    var objetos=document.querySelectorAll(".obstaculo");
+    for(var i=0;i<objetos.length;i++){
+        objetos[i].style.filter="hue-rotate(160deg) brightness(1.5)";
+        objetos[i].dataset.congelado="sim";
+    }
+
+    setTimeout(function(){
+        for(var i=0;i<objetos.length;i++){
+            if(objetos[i].parentNode){
+                objetos[i].style.filter="";
+                objetos[i].dataset.congelado="";
+            }
+        }
+    },2000);
+
+}
+
+/* =========================================================
+   PROJÉTIL
+========================================================= */
+
+function criarProjetil(classe,velocidade,callback){
+
+    var area=document.getElementById("areaJogo");
+    var balao=document.getElementById("balao");
+
+    if(!area || !balao){
+        return;
+    }
+
+    var tiro=document.createElement("div");
+    tiro.className="projetil "+classe;
+
+    /* Usa a posição visual real do balão.
+       Isso corrige o translateX(-50%) do balão e faz
+       o poder nascer exatamente alinhado ao centro dele. */
+    var areaRect=area.getBoundingClientRect();
+    var balaoRect=balao.getBoundingClientRect();
+    var tiroLargura=(classe==="tiro-laser") ? 14 : 9;
+
+    var bx=(balaoRect.left-areaRect.left)+
+           (balaoRect.width/2)-
+           (tiroLargura/2);
+
+    var by=(balaoRect.top-areaRect.top)-
+           (classe==="tiro-laser" ? 55 : 28);
+
+    tiro.style.left=bx+"px";
+    tiro.style.top=by+"px";
+    area.appendChild(tiro);
+
+    var y=by;
+
+    var movimento=setInterval(function(){
+
+        if(!jogoRodando || jogoPausado || !tiro.parentNode){
+            clearInterval(movimento);
+            return;
+        }
+
+        y-=velocidade;
+        tiro.style.top=y+"px";
+
+        if(callback){
+            callback(tiro);
+        }
+
+        if(y<-120){
+            if(tiro.parentNode){
+                tiro.remove();
+            }
+            clearInterval(movimento);
+        }
+
+    },20);
+}
+
+/* =========================================================
+   DESTRUIR OBSTÁCULO
+========================================================= */
+
+function destruirPrimeiroObstaculo(tiro){
+
+    var objetos=
+        document.querySelectorAll(".obstaculo");
+
+    var tiroRect=tiro.getBoundingClientRect();
+
+    for(var i=0;i<objetos.length;i++){
+
+        var o=objetos[i].getBoundingClientRect();
+
+        if(
+            tiroRect.left<o.right &&
+            tiroRect.right>o.left &&
+            tiroRect.top<o.bottom &&
+            tiroRect.bottom>o.top
+        ){
+
+            objetos[i].remove();
+
+            criarExplosaoNo(
+                o.left+o.width/2,
+                o.top+o.height/2
+            );
+
+            if(tiro.parentNode){
+                tiro.remove();
+            }
+
+            break;
+
+        }
+
+    }
+
+}
+
+/* =========================================================
+   CHEFE
+========================================================= */
+
+function aplicarCenarioChefe(){
+
+    var jogo=document.getElementById("jogo");
+
+    jogo.classList.remove(
+        "cenario-golem",
+        "cenario-dragon",
+        "cenario-reaper"
+    );
+
+    jogo.classList.add("cenario-"+tipoChefe);
+}
+
+function iniciarChefe(){
+
+    if(chefeAtivo){
+        return;
+    }
+
+    chefeAtivo=true;
+
+    limparInimigos();
+
+    if(dificuldade==="facil"){
+        tipoChefe="golem";
+    }
+
+    if(dificuldade==="medio"){
+        tipoChefe="dragon";
+    }
+
+    if(dificuldade==="dificil"){
+        tipoChefe="reaper";
+    }
+
+    if(dificuldade==="extremo"){
+        tipoChefe=["golem","dragon","reaper"][bossExtremoIndex];
+    }
+
+    vidaChefe=obterConfigJogo().chefeVida || 100;
+
+    var chefe=document.getElementById("chefe");
+
+    chefe.style.display="block";
+
+    chefe.className="chefe boss-"+tipoChefe;
+
+    aplicarCenarioChefe();
+
+    criarVisualChefe();
+
+    document.getElementById("barraChefe").style.display="block";
+
+    /* Entrega um poder de ataque imediatamente ao começar o BOSS.
+       Se o jogador já tiver um poder, não substitui o que ele possui. */
+    if(!filaPoderes.length){
+        filaPoderes.push("⚡");
+        poderAtual=filaPoderes[0];
+        atualizarPoderStatus();
+    }
+
+    document.getElementById("vidaChefe").style.width="100%";
+
+    iniciarMovimentoChefe();
+
+    iniciarAtaquesChefe();
+
+    criarPowerUp();
+
+}
+
+function criarVisualChefe(){
+
+    var chefe=document.getElementById("chefe");
+
+    chefe.innerHTML="";
+
+    var aura=document.createElement("div");
+    aura.className="boss-aura";
+    chefe.appendChild(aura);
+
+    if(tipoChefe==="golem"){
+
+        var braco1=document.createElement("div");
+        braco1.className="golem-braco esq";
+
+        var braco2=document.createElement("div");
+        braco2.className="golem-braco dir";
+
+        var cabeca=document.createElement("div");
+        cabeca.className="golem-cabeca";
+
+        var nucleo=document.createElement("div");
+        nucleo.className="golem-nucleo";
+
+        chefe.appendChild(braco1);
+        chefe.appendChild(braco2);
+        chefe.appendChild(cabeca);
+        chefe.appendChild(nucleo);
+
+    }
+
+    if(tipoChefe==="dragon"){
+
+        var asa1=document.createElement("div");
+        asa1.className="dragon-asa esq";
+
+        var asa2=document.createElement("div");
+        asa2.className="dragon-asa dir";
+
+        var chifre1=document.createElement("div");
+        chifre1.className="dragon-chifre esq";
+
+        var chifre2=document.createElement("div");
+        chifre2.className="dragon-chifre dir";
+
+        var cabecaDragon=document.createElement("div");
+        cabecaDragon.className="dragon-cabeca";
+
+        var fogo=document.createElement("div");
+        fogo.className="dragon-fogo";
+        fogo.textContent="🔥";
+
+        chefe.appendChild(asa1);
+        chefe.appendChild(asa2);
+        chefe.appendChild(chifre1);
+        chefe.appendChild(chifre2);
+        chefe.appendChild(cabecaDragon);
+        chefe.appendChild(fogo);
+
+    }
+
+    if(tipoChefe==="reaper"){
+
+        var capa=document.createElement("div");
+        capa.className="reaper-capa";
+
+        var capuz=document.createElement("div");
+        capuz.className="reaper-capuz";
+
+        var olho1=document.createElement("div");
+        olho1.className="reaper-olho esq";
+
+        var olho2=document.createElement("div");
+        olho2.className="reaper-olho dir";
+
+        var foice=document.createElement("div");
+        foice.className="reaper-foice";
+
+        chefe.appendChild(capa);
+        chefe.appendChild(capuz);
+        chefe.appendChild(olho1);
+        chefe.appendChild(olho2);
+        chefe.appendChild(foice);
+
+    }
+
+}
+
+/* =========================================================
+   MOVIMENTO DO CHEFE
+========================================================= */
+
+function iniciarMovimentoChefe(){
+
+    var chefe=document.getElementById("chefe");
+    var area=document.getElementById("areaJogo");
+
+    var x=(area.clientWidth-190)/2;
+
+    var direcao=1;
+
+    var velocidade=
+        obterConfigJogo().chefeVelocidade;
+
+    if(intervaloBossMovimento){
+        clearInterval(intervaloBossMovimento);
+    }
+
+    intervaloBossMovimento=setInterval(function(){
+
+        if(!jogoRodando || !chefeAtivo){
+
+            clearInterval(intervaloBossMovimento);
+            intervaloBossMovimento=null;
+            return;
+
+        }
+
+        x+=velocidade*direcao;
+
+        if(x<5){
+            x=5;
+            direcao=1;
+        }
+
+        if(x>area.clientWidth-195){
+            x=area.clientWidth-195;
+            direcao=-1;
+        }
+
+        chefe.style.left=x+"px";
+        chefe.style.transform="none";
+
+    },30);
+
+}
+
+/* =========================================================
+   ATAQUES DO CHEFE
+========================================================= */
+
+function iniciarAtaquesChefe(){
+
+    intervaloBossAtaque=setInterval(function(){
+
+        if(!jogoRodando || jogoPausado || !chefeAtivo){
+            return;
+        }
+
+        criarAtaqueChefe();
+
+    },obterConfigJogo().chefeAtaque);
+
+}
+
+function criarAtaqueChefe(){
+
+    var area=document.getElementById("areaJogo");
+
+    var chefe=document.getElementById("chefe");
+
+    var fogo=document.createElement("div");
+
+    fogo.className="obstaculo bola-fogo";
+
+    fogo.textContent=
+        tipoChefe==="golem" ? "🪨" :
+        tipoChefe==="dragon" ? "🔥" :
+        "🌀";
+
+    var posX=chefe.offsetLeft+
+        chefe.offsetWidth/2-20;
+
+    var posY=chefe.offsetTop+
+        chefe.offsetHeight-20;
+
+    fogo.style.left=posX+"px";
+    fogo.style.top=posY+"px";
+
+    area.appendChild(fogo);
+
+    var x=posX;
+    var y=posY;
+
+    var alvo=document.getElementById("balao");
+
+    var alvoX=alvo.offsetLeft+
+        alvo.offsetWidth/2;
+
+    var dx=alvoX-x;
+
+    var distanciaY=
+        area.clientHeight-y;
+
+    var vx=dx/Math.max(1,distanciaY)*3;
+
+    var vy=3.2;
+
+    if(dificuldade==="dificil"){
+        vy=3.8;
+    }
+
+    if(dificuldade==="extremo"){
+        vy=4.2;
+    }
+
+    var movimento=setInterval(function(){
+
+        if(!jogoRodando || jogoPausado || !fogo.parentNode){
+
+            clearInterval(movimento);
+            return;
+
+        }
+
+        x+=vx;
+        y+=vy;
+
+        fogo.style.left=x+"px";
+        fogo.style.top=y+"px";
+
+        if(colisao(fogo)){
+
+            clearInterval(movimento);
+
+            if(fogo.parentNode){
+                fogo.remove();
+            }
+
+            sofrerDano();
+
+            return;
+
+        }
+
+        if(y>area.clientHeight+50){
+
+            clearInterval(movimento);
+
+            if(fogo.parentNode){
+                fogo.remove();
+            }
+
+        }
+
+    },20);
+
+}
+
+/* =========================================================
+   DANO NO CHEFE
+========================================================= */
+
+function danoChefe(dano){
+
+    if(!chefeAtivo){
+        return;
+    }
+
+    vidaChefe-=dano;
+
+    if(vidaChefe<0){
+        vidaChefe=0;
+    }
+
+    document.getElementById("vidaChefe").style.width=
+        vidaChefe+"%";
+
+    var chefe=document.getElementById("chefe");
+
+    chefe.style.filter=
+        "brightness(2)";
+
+    setTimeout(function(){
+
+        if(chefe.parentNode){
+            chefe.style.filter="";
+        }
+
+    },100);
+
+    if(vidaChefe<=0){
+        derrotarChefe();
+    }
+
+}
+
+/* =========================================================
+   DERROTAR CHEFE
+========================================================= */
+
+function derrotarChefe(){
+
+    chefeAtivo=false;
+
+    var chefe=document.getElementById("chefe");
+
+    criarExplosaoNo(
+        chefe.getBoundingClientRect().left+
+        chefe.getBoundingClientRect().width/2,
+
+        chefe.getBoundingClientRect().top+
+        chefe.getBoundingClientRect().height/2
+    );
+
+    chefe.style.display="none";
+
+    document.getElementById("barraChefe").style.display="none";
+
+    desbloquearSkinChefe();
+
+    pontuacao+=100;
+
+    document.getElementById("pontuacao").textContent=
+        pontuacao;
+
+    if(dificuldade==="extremo" && bossExtremoIndex<2){
+
+        bossExtremoIndex++;
+
+        setTimeout(function(){
+
+            if(jogoRodando){
+                limparInimigos();
+                iniciarChefe();
+            }
+
+        },900);
+
+        return;
+    }
+
+    setTimeout(function(){
+
+        if(jogoRodando){
+            alert(
+                "🔥 CHEFE DERROTADO!\n\n"+
+                "Você desbloqueou uma nova skin!"
+            );
+        }
+
+    },300);
+
+}
+
+function desbloquearSkinChefe(){
+
+    var skin=
+
+        tipoChefe==="golem" ? "golem" :
+        tipoChefe==="dragon" ? "dragon" :
+        "reaper";
+
+    if(!dados.coresCompradas.includes(skin)){
+
+        dados.coresCompradas.push(skin);
+
+        dados.cor=skin;
+
+        salvarDados();
+
+    }
+
+}
+
+/* =========================================================
+   LIMPAR INIMIGOS
+========================================================= */
+
+function limparInimigos(){
+
+    var area=document.getElementById("areaJogo");
+
+    var objetos=
+        area.querySelectorAll(".obstaculo,.projetil");
+
+    for(var i=0;i<objetos.length;i++){
+        objetos[i].remove();
+    }
+
+    var efeitos=area.querySelectorAll(".vortex-effect");
+    for(var j=0;j<efeitos.length;j++){
+        efeitos[j].remove();
+    }
+
+}
+
+/* =========================================================
+   EXPLOSÃO
+========================================================= */
+
+function criarExplosao(){
+
+    var balao=document.getElementById("balao");
+
+    var r=balao.getBoundingClientRect();
+
+    criarExplosaoNo(
+        r.left+r.width/2,
+        r.top+r.height/2
+    );
+
+}
+
+function criarExplosaoNo(x,y){
+
+    var area=document.getElementById("areaJogo");
+
+    var e=document.createElement("div");
+
+    e.className="explosao";
+
+    var rect=area.getBoundingClientRect();
+
+    e.style.left=(x-rect.left)+"px";
+    e.style.top=(y-rect.top)+"px";
+
+    area.appendChild(e);
+
+    setTimeout(function(){
+
+        if(e.parentNode){
+            e.remove();
+        }
+
+    },550);
+
+}
+
+/* =========================================================
+   GAME OVER
+========================================================= */
+
+function terminarJogo(){
+
+    if(!jogoRodando){
+        return;
+    }
+
+    jogoRodando=false;
+
+    limparIntervalos();
+
+    if(pontuacao>dados.recorde){
+
+        dados.recorde=pontuacao;
+        salvarDados();
+
+    }
+
+    document.getElementById("pontuacaoFinal").textContent=
+        pontuacao;
+
+    document.getElementById("recordeFinal").textContent=
+        dados.recorde;
+
+    document.getElementById("moedasFinal").textContent=
+        dados.moedas;
+
+    document.getElementById("diamantesFinal").textContent=
+        dados.diamantes;
+
+    atualizarBotaoReviver();
+
+    document.getElementById("gameOver").style.display="flex";
+
+}
+
+/* =========================================================
+   REVIVER
+========================================================= */
+
+function atualizarBotaoReviver(){
+
+    var botao=document.getElementById("botaoReviver");
+    var texto=document.getElementById("diamantesReviver");
+
+    if(!botao || !texto){
+        return;
+    }
+
+    texto.textContent=
+        "Você tem "+dados.diamantes+" diamante"+
+        (dados.diamantes===1 ? "" : "s");
+
+    botao.disabled=dados.diamantes<5;
+
+    if(dados.diamantes<5){
+        botao.textContent="💎 PRECISA DE 5 DIAMANTES";
+    }else{
+        botao.textContent="💎 REVIVER — 5 DIAMANTES";
+    }
+
+}
+
+function reviverJogador(){
+
+    if(jogoRodando || dados.diamantes<5){
+        return;
+    }
+
+    dados.diamantes-=5;
+    salvarDados();
+
+    document.getElementById("diamantesHUD").textContent=dados.diamantes;
+
+    document.getElementById("gameOver").style.display="none";
+
+    jogoRodando=true;
+    invulneravelRevive=true;
+    moverEsquerda=false;
+    moverDireita=false;
+
+    limparInimigos();
+    posicionarBalao();
+
+    /* O jogador ganha alguns segundos de segurança para se reorganizar. */
+    var balao=document.getElementById("balao");
+    balao.style.filter="drop-shadow(0 0 18px #4df) drop-shadow(0 0 38px #8ff)";
+
+    setTimeout(function(){
+        invulneravelRevive=false;
+        balao.style.filter="";
+    },3000);
+
+    iniciarPontuacao();
+    iniciarInimigos();
+    iniciarMoedas();
+    iniciarDiamantes();
+    iniciarPoderes();
+    iniciarEscudo();
+
+    if(chefeAtivo){
+        iniciarMovimentoChefe();
+        iniciarAtaquesChefe();
+    }
+
+}
+
+/* =========================================================
+   REINICIAR
+========================================================= */
+
+function reiniciarJogo(){
+
+    document.getElementById("gameOver").style.display="none";
+
+    iniciarJogo();
+
+}
+
+/* =========================================================
+   SAIR
+========================================================= */
+
+function sairDoJogo(){
+
+    jogoRodando=false;
+
+    limparIntervalos();
+
+    limparInimigos();
+
+    document.getElementById("jogo").style.display="none";
+
+    document.getElementById("menu").style.display="flex";
+
+    atualizarMenu();
+
+}
+
+/* =========================================================
+   LIMPAR INTERVALOS
+========================================================= */
+
+function limparIntervalos(){
+
+    if(intervaloMovimento){
+        clearInterval(intervaloMovimento);
+        intervaloMovimento=null;
+    }
+
+    if(intervaloInimigos){
+        clearInterval(intervaloInimigos);
+        intervaloInimigos=null;
+    }
+
+    if(intervaloPontuacao){
+        clearInterval(intervaloPontuacao);
+        intervaloPontuacao=null;
+    }
+
+    if(intervaloMoedas){
+        clearInterval(intervaloMoedas);
+        intervaloMoedas=null;
+    }
+
+    if(intervaloDiamantes){
+        clearInterval(intervaloDiamantes);
+        intervaloDiamantes=null;
+    }
+
+    if(intervaloPoderes){
+        clearInterval(intervaloPoderes);
+        intervaloPoderes=null;
+    }
+
+    if(intervaloEscudo){
+        clearInterval(intervaloEscudo);
+        intervaloEscudo=null;
+    }
+
+    if(intervaloBossAtaque){
+        clearInterval(intervaloBossAtaque);
+        intervaloBossAtaque=null;
+    }
+
+    if(intervaloBossMovimento){
+        clearInterval(intervaloBossMovimento);
+        intervaloBossMovimento=null;
+    }
+
+}
+
+/* =========================================================
+   PAUSA
+========================================================= */
+function alternarPause(){
+    if(!jogoRodando && !jogoPausado) return;
+    jogoPausado=!jogoPausado;
+    var overlay=document.getElementById("pauseOverlay");
+    var btn=document.getElementById("pauseBtn");
+    if(overlay) overlay.style.display=jogoPausado?"flex":"none";
+    if(btn) btn.textContent=jogoPausado?"▶️ RETOMAR":"⏸️ PAUSAR";
+    if(jogoPausado){ moverEsquerda=false; moverDireita=false; }
+}
+function sairDaPausa(){
+    jogoPausado=false;
+    var overlay=document.getElementById("pauseOverlay"); if(overlay) overlay.style.display="none";
+    var btn=document.getElementById("pauseBtn"); if(btn) btn.textContent="⏸️ PAUSAR";
+    sairDoJogo();
+}
+
+/* =========================================================
+   SOM
+========================================================= */
+
+var audioContext=null;
+
+function tocarSomInicio(){
+
+    try{
+
+        if(!audioContext){
+
+            audioContext=
+                new (window.AudioContext ||
+                window.webkitAudioContext)();
+
+        }
+
+        if(audioContext.state==="suspended"){
+            audioContext.resume();
+        }
+
+        var osc=
+            audioContext.createOscillator();
+
+        var ganho=
+            audioContext.createGain();
+
+        osc.frequency.value=440;
+        osc.type="sine";
+
+        ganho.gain.setValueAtTime(
+            .04,
+            audioContext.currentTime
+        );
+
+        ganho.gain.exponentialRampToValueAtTime(
+            .001,
+            audioContext.currentTime+.3
+        );
+
+        osc.connect(ganho);
+        ganho.connect(audioContext.destination);
+
+        osc.start();
+
+        osc.stop(
+            audioContext.currentTime+.3
+        );
+
+    }catch(e){}
+
+}
+
+/* =========================================================
+   INICIALIZAÇÃO
+========================================================= */
+
+aplicarSkin();
+atualizarModoMenu();
+atualizarMenu();
+
+
+/* =========================================================
+   ATUALIZAÇÃO 2.0 — ECONOMIA, GELO E 2 JOGADORES
+========================================================= */
+var _modoJogoAnterior=modoJogo;
+var modoDupla=false;
+var duplaSkin1="normal", duplaSkin2="normal";
+var duplaPronto=false;
+var duplaRodando=false;
+var duplaAnim=null;
+var duplaUltimo=0;
+var duplaP1={x:0,dirL:false,dirR:false,vel:8,poderes:[],gelo:false,lentoAte:0,score:0,vivo:true,escudo1Hit:false};
+var duplaP2={x:0,dirL:false,dirR:false,vel:8,poderes:[],gelo:false,lentoAte:0,score:0,vivo:true,escudo1Hit:false};
+var duplaPowerUps=[];
+var duplaObstaculos=[];
+var duplaBoss={ativo:false,tipo:0,nivel:1,vida:0,max:0,x:0,dir:1,slowAte:0};
+var duplaBossNomes=["golem","dragon","reaper","eagle","mister"];
+var duplaBossEmoji={golem:"🗿",dragon:"🐉",reaper:"☠️",eagle:"🦅",mister:"🎈"};
+var duplaBossTitulo={golem:"Golem Cósmico",dragon:"Dragão de Lava",reaper:"Ceifador Sombrio",eagle:"Águia Suprema",mister:"Mister Balões"};
+var duplaTimers=[];
+
+function precoPacotes(){return {d1:2.90,d2:9.90,d3:16.90,c1:2.90,c2:7.90,c3:14.90};}
+function comprarPacoteDemo(tipo,qtd,preco){
+    /* Loja preparada para monetização. Nesta versão HTML, o botão só simula a compra. */
+    if(!confirm("Pacote de "+qtd+" "+(tipo==="diamante"?"diamantes":"moedas")+" por R$ "+preco.toFixed(2).replace('.',',')+".\n\nA compra real ainda precisa de um sistema de pagamento.")) return;
+    if(tipo==="diamante") dados.diamantes+=qtd; else dados.moedas+=qtd;
+    salvarDados(); atualizarEconomia(); atualizarMenu();
+    var mh=document.getElementById("moedasHUD"),dh=document.getElementById("diamantesHUD");
+    if(mh) mh.textContent=dados.moedas; if(dh) dh.textContent=dados.diamantes;
+}
+
+function atualizarEconomiaComPrecos(){
+    var g=document.querySelector("#economiaLoja .economia-grid"); if(!g) return;
+    var p=precoPacotes();
+    g.innerHTML=''+
+    '<div class="economia-card"><div class="icone">💎</div><h3>10 Diamantes</h3><p>Para reviver e recursos futuros.</p><button type="button" onclick="comprarPacoteDemo(\'diamante\',10,'+p.d1+')">R$ '+p.d1.toFixed(2).replace('.',',')+'</button></div>'+
+    '<div class="economia-card"><div class="icone">💎💎</div><h3>50 Diamantes</h3><p>Pacote econômico.</p><button type="button" onclick="comprarPacoteDemo(\'diamante\',50,'+p.d2+')">R$ '+p.d2.toFixed(2).replace('.',',')+'</button></div>'+
+    '<div class="economia-card"><div class="icone">💎💎💎</div><h3>100 Diamantes</h3><p>Pacote grande.</p><button type="button" onclick="comprarPacoteDemo(\'diamante\',100,'+p.d3+')">R$ '+p.d3.toFixed(2).replace('.',',')+'</button></div>'+
+    '<div class="economia-card"><div class="icone">🪙</div><h3>100 Moedas</h3><p>Para skins e melhorias.</p><button type="button" onclick="comprarPacoteDemo(\'moeda\',100,'+p.c1+')">R$ '+p.c1.toFixed(2).replace('.',',')+'</button></div>'+
+    '<div class="economia-card"><div class="icone">🪙🪙</div><h3>500 Moedas</h3><p>Pacote econômico.</p><button type="button" onclick="comprarPacoteDemo(\'moeda\',500,'+p.c2+')">R$ '+p.c2.toFixed(2).replace('.',',')+'</button></div>'+
+    '<div class="economia-card"><div class="icone">🪙🪙🪙</div><h3>1000 Moedas</h3><p>Pacote grande.</p><button type="button" onclick="comprarPacoteDemo(\'moeda\',1000,'+p.c3+')">R$ '+p.c3.toFixed(2).replace('.',',')+'</button></div>';
+}
+var _abrirEconomia=abrirEconomia;
+abrirEconomia=function(){_abrirEconomia(); atualizarEconomiaComPrecos();};
+
+/* GELO: agora arma uma penalidade real. Na colisão, o balão fica lento por 2s. */
+/* Gelo corrigido: a lógica principal agora está em congelarInimigos/sofrerDano. */
+
+/* MODO */
+var _atualizarModoMenuOriginal=atualizarModoMenu;
+atualizarModoMenu=function(){
+    var nomeModo=modoJogo==="dupla"?"2 JOGADORES":(modoJogo==="pc"?"COMPUTADOR":"CELULAR");
+    var a=document.getElementById("modoMenu"),b=document.getElementById("modoMenuInfo");
+    if(a)a.textContent=nomeModo;if(b)b.textContent=nomeModo;
+    document.body.classList.toggle("modo-pc",modoJogo!=="celular");
+    ["modoCelular","modoPC","modoDupla"].forEach(function(id){var el=document.getElementById(id);if(el)el.classList.toggle("selecionado",(id==="modoDupla"&&modoJogo==="dupla")||(id==="modoPC"&&modoJogo==="pc")||(id==="modoCelular"&&modoJogo==="celular"));});
+};
+selecionarModo=function(valor){modoJogo=(valor==="dupla"?"dupla":(valor==="pc"?"pc":"celular"));atualizarModoMenu();};
+var _fecharModoOriginal=fecharModo;
+fecharModo=function(){_fecharModoOriginal();};
+confirmarModoEIniciar=function(){
+    if(modoJogo==="dupla"){
+        document.getElementById("modoTela").style.display="none";
+        abrirDuplaSetup();
+    }else{
+        document.getElementById("modoTela").style.display="none";
+        document.getElementById("jogo").style.display="block";
+        iniciarJogo();
+    }
+};
+
+function montarSkinsDupla(){
+    [1,2].forEach(function(n){
+        var box=document.getElementById("skinsP"+n); if(!box)return; box.innerHTML="";
+        for(var i=0;i<skins.length;i++){
+            var sk=skins[i];
+            var btn=document.createElement("button"); btn.type="button"; btn.className="dupla-skin";
+            if((n===1?duplaSkin1:duplaSkin2)===sk.id)btn.classList.add("selecionada");
+            btn.innerHTML='<div class="dupla-mini-balao skin-'+sk.id+'"><div class="balao-corpo"></div><div class="balao-extra"></div></div>'+sk.nome;
+            /* No 2P, todas as skins ficam disponíveis. */
+            btn.disabled=false;
+            btn.onclick=(function(nn,id){return function(){if(nn===1)duplaSkin1=id;else duplaSkin2=id;montarSkinsDupla();}})(n,sk.id);
+            box.appendChild(btn);
+        }
+    });
+}
+function abrirDuplaSetup(){
+    duplaPronto=false; document.getElementById("duplaSetup").style.display="block"; montarSkinsDupla();
+    document.getElementById("duplaEscolhaStatus").textContent="Escolham as skins e depois apertem PRONTOS.";
+}
+function fecharDuplaSetup(){document.getElementById("duplaSetup").style.display="none";document.getElementById("modoTela").style.display="flex";}
+document.addEventListener("DOMContentLoaded",function(){
+    var botaoPronto=document.getElementById("duplaReady");
+    if(!botaoPronto)return;
+    botaoPronto.addEventListener("click",function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        duplaPronto=true;
+        document.getElementById("duplaSetup").style.display="none";
+        document.getElementById("jogo").style.display="block";
+        iniciarJogo();
+    });
+});
+
+/* =========================================================
+   2P — MOTOR PRÓPRIO FINAL
+========================================================= */
+var _iniciarJogoOriginal=iniciarJogo;
+iniciarJogo=function(){ if(modoJogo!=="dupla"){_iniciarJogoOriginal();return;} iniciarDupla(); };
+var _sairDoJogoOriginal=sairDoJogo;
+sairDoJogo=function(){ if(modoJogo==="dupla"){encerrarDupla(false);document.getElementById("jogo").style.display="none";document.getElementById("menu").style.display="flex";atualizarMenu();}else _sairDoJogoOriginal(); };
+var _reiniciarJogoOriginal=reiniciarJogo;
+reiniciarJogo=function(){ if(modoJogo==="dupla"){document.getElementById("gameOver").style.display="none";iniciarDupla();}else _reiniciarJogoOriginal(); };
+
+function criarBalaoDupla(id,skin){
+    var b=document.getElementById(id); if(b)b.remove();
+    b=document.createElement("div"); b.id=id; b.className="skin-"+skin;
+    b.innerHTML='<div class="balao-corpo"></div><div class="balao-extra"></div><div class="balao-no"></div><div class="balao-corda"></div>';
+    document.getElementById("areaJogo").appendChild(b); return b;
+}
+function posDupla(){
+    var area=document.getElementById("areaJogo"),w=65;
+    duplaP1.x=Math.max(5,area.clientWidth*.28-w/2);
+    duplaP2.x=Math.max(5,area.clientWidth*.72-w/2);
+}
+function aplicarPosDupla(){
+    var area=document.getElementById("areaJogo"),w=65,max=Math.max(5,area.clientWidth-w-5);
+    duplaP1.x=Math.max(5,Math.min(max,duplaP1.x)); duplaP2.x=Math.max(5,Math.min(max,duplaP2.x));
+    var b1=document.getElementById("balao"),b2=document.getElementById("balao2");
+    if(b1)b1.style.setProperty("--p1x",duplaP1.x+"px");
+    if(b2)b2.style.setProperty("--p2x",duplaP2.x+"px");
+}
+function limparDuplaElementos(){
+    duplaPowerUps.forEach(function(p){if(p.el&&p.el.parentNode)p.el.remove();});
+    duplaObstaculos.forEach(function(o){if(o.el&&o.el.parentNode)o.el.remove();});
+    duplaPowerUps=[]; duplaObstaculos=[];
+}
+function aplicarGeloNaColisao(balao,estado,obj){
+    if(!estado.gelo)return false;
+    estado.gelo=false; estado.lentoAte=performance.now()+2000;
+    if(balao){
+        balao.classList.add("dupla-hit-flash");
+        balao.style.filter="hue-rotate(160deg) brightness(1.5)";
+        setTimeout(function(){if(balao.parentNode){balao.classList.remove("dupla-hit-flash");balao.style.filter="";}},2000);
+    }
+    atualizarInventarioDupla(); return true;
+}
+function aplicarCenarioDupla(){
+    var jogo=document.getElementById("jogo");
+    if(!jogo)return;
+    ["cenario-2p-golem","cenario-2p-dragon","cenario-2p-reaper","cenario-2p-eagle","cenario-2p-mister"].forEach(function(c){jogo.classList.remove(c);});
+    jogo.classList.add("cenario-2p-"+duplaBossNomes[duplaBoss.tipo]);
+}
+function atualizarProtecaoVisualDupla(){
+    ["balao","balao2"].forEach(function(id,i){
+        var el=document.getElementById(id),estado=i===0?duplaP1:duplaP2;
+        if(!el)return;
+        el.classList.toggle("dupla-shield-ready",!!estado.escudo1Hit && estado.vivo);
+    });
+}
+function ganharProtecaoBossDupla(){
+    [duplaP1,duplaP2].forEach(function(estado){if(estado.vivo)estado.escudo1Hit=true;});
+    atualizarProtecaoVisualDupla();
+    atualizarHUDDupla();
+    var info=document.getElementById("duplaBossInfo");
+    if(info)info.textContent="🛡️ BOSS COMPLETO! Cada jogador ganhou 1 chance de receber um hit!";
+}
+function consumirProtecaoDupla(estado,el){
+    if(!estado.escudo1Hit || !estado.vivo)return false;
+    estado.escudo1Hit=false;
+    if(el){el.classList.add("dupla-hit-protected");setTimeout(function(){if(el.parentNode)el.classList.remove("dupla-hit-protected");},600);}
+    criarEfeitoColetaDupla(el,"🛡️");
+    atualizarProtecaoVisualDupla();
+    atualizarHUDDupla();
+    return true;
+}
+function iniciarDupla(){
+    limparIntervalos(); limparDuplaElementos(); duplaTimers.forEach(clearTimeout); duplaTimers=[];
+    if(duplaAnim)cancelAnimationFrame(duplaAnim); duplaAnim=null;
+    jogoPausado=false;
+    var po=document.getElementById("pauseOverlay");if(po)po.style.display="none";
+    var pb=document.getElementById("pauseBtn");if(pb)pb.textContent="⏸️ PAUSAR";
+    duplaRodando=true; modoDupla=true;
+    duplaBoss={ativo:false,tipo:0,nivel:1,vida:0,max:0,x:0,dir:1};
+    duplaP1={x:0,dirL:false,dirR:false,vel:8,poderes:[],gelo:false,lentoAte:0,score:0,vivo:true,escudo1Hit:false};
+    duplaP2={x:0,dirL:false,dirR:false,vel:8,poderes:[],gelo:false,lentoAte:0,score:0,vivo:true,escudo1Hit:false};
+    var jogo=document.getElementById("jogo"); jogo.classList.add("modo-dupla");
+    document.getElementById("gameOver").style.display="none";
+    document.getElementById("barraChefe").style.display="none";
+    document.getElementById("duplaHUD").style.display="flex";
+    document.getElementById("duplaBossInfo").style.display="block";
+    document.getElementById("duplaBossInfo").textContent="👥 Preparem-se! Os obstáculos já estão caindo!";
+    var b1=document.getElementById("balao"); b1.className="skin-"+duplaSkin1; b1.classList.remove("dupla-dead");
+    criarBalaoDupla("balao2",duplaSkin2); document.getElementById("balao2").classList.remove("dupla-dead");
+    posDupla(); aplicarPosDupla();
+    document.getElementById("pontuacao").textContent="0";
+    document.getElementById("moedasHUD").textContent=dados.moedas;
+    document.getElementById("diamantesHUD").textContent=dados.diamantes;
+    document.getElementById("nomeHUD").textContent="P1";
+    atualizarInventarioDupla();
+    atualizarProtecaoVisualDupla();
+    /* Poucos poderes no cenário: é preciso se arriscar para pegá-los. */
+    for(var i=0;i<2;i++)criarPowerDupla(-180-i*260);
+    iniciarLoopDupla();
+    /* Objetos caem desde o primeiro segundo. O primeiro chefe só entra depois. */
+    duplaTimers.push(setTimeout(function(){iniciarBossDupla();},15000));
+}
+function iniciarLoopDupla(){
+    duplaUltimo=performance.now();
+    function loop(t){
+        if(!duplaRodando)return;
+        if(jogoPausado){duplaUltimo=t;duplaAnim=requestAnimationFrame(loop);return;}
+        var dt=Math.min(.04,(t-duplaUltimo)/1000); duplaUltimo=t;
+        var agora=performance.now();
+        var m1=agora<duplaP1.lentoAte?.45:1, m2=agora<duplaP2.lentoAte?.45:1;
+        if(duplaP1.vivo)duplaP1.x+=(duplaP1.dirR-duplaP1.dirL)*duplaP1.vel*60*dt*m1;
+        if(duplaP2.vivo)duplaP2.x+=(duplaP2.dirR-duplaP2.dirL)*duplaP2.vel*60*dt*m2;
+        aplicarPosDupla(); moverPowerDupla(dt); moverObstaculosDupla(dt); moverBossDupla(dt);
+        duplaAnim=requestAnimationFrame(loop);
+    }
+    duplaAnim=requestAnimationFrame(loop);
+}
+function criarPowerDupla(y0){
+    var area=document.getElementById("areaJogo");
+    if(!area || duplaPowerUps.length>=2)return;
+    var tipos=["⚡","🔱","🌀","❄️"],tipo=tipos[Math.floor(Math.random()*tipos.length)];
+    var el=document.createElement("div");
+    el.className="dupla-power raro";
+    el.textContent=tipo;
+    var x=Math.random()*Math.max(20,area.clientWidth-40);
+    el.style.left=x+"px";el.style.top=y0+"px";
+    area.appendChild(el);
+    duplaPowerUps.push({el:el,x:x,y:y0,tipo:tipo,vel:125+Math.random()*25});
+}
+function atualizarInventarioDupla(){
+    var box=document.getElementById("duplaInventario");if(!box)return;
+    function montar(estado){return estado.poderes.slice(-6).map(function(p){return '<span class="dupla-slot">'+p+'</span>';}).join("");}
+    box.innerHTML='<div class="dupla-inv">'+montar(duplaP1)+'</div><div class="dupla-inv" style="justify-content:flex-end">'+montar(duplaP2)+'</div>';
+}
+function moverPowerDupla(dt){
+    var area=document.getElementById("areaJogo");
+    for(var i=duplaPowerUps.length-1;i>=0;i--){
+        var p=duplaPowerUps[i];p.y+=p.vel*dt;p.el.style.top=p.y+"px";
+        var alvo=qualBalaoDupla(p);
+        if(alvo){
+            alvo.estado.poderes.push(p.tipo);
+            criarEfeitoColetaDupla(alvo.el,p.tipo);
+            if(p.el.parentNode)p.el.remove();
+            duplaPowerUps.splice(i,1);
+            atualizarInventarioDupla();
+            /* Reposição lenta: nunca enche a tela de poderes. */
+            duplaTimers.push(setTimeout(function(){if(duplaRodando && !jogoPausado)criarPowerDupla(-55);},3800+Math.random()*2600));
+            continue;
+        }
+        if(p.y>area.clientHeight+40){
+            if(p.el.parentNode)p.el.remove();
+            duplaPowerUps.splice(i,1);
+            duplaTimers.push(setTimeout(function(){if(duplaRodando && !jogoPausado)criarPowerDupla(-55);},4500+Math.random()*2500));
+        }
+    }
+}
+function qualBalaoDupla(p){
+    var b1=document.getElementById("balao"),b2=document.getElementById("balao2");
+    var area=document.getElementById("areaJogo").getBoundingClientRect();
+    function hit(b,estado){if(!b||!estado.vivo)return false;var r=b.getBoundingClientRect(),px=area.left+p.x+15,py=area.top+p.y+15;return px>r.left&&px<r.right&&py>r.top&&py<r.bottom;}
+    if(hit(b1,duplaP1))return {el:b1,estado:duplaP1}; if(hit(b2,duplaP2))return {el:b2,estado:duplaP2}; return null;
+}
+function criarObstaculoDupla(){
+    if(!duplaRodando||jogoPausado)return;
+    var area=document.getElementById("areaJogo");
+    var tipos=["💣","🔥","🪡","🪨","☄️","🐲"];
+    var tipo=tipos[Math.floor(Math.random()*tipos.length)];
+    var el=document.createElement("div");
+    el.className="dupla-obstaculo";el.textContent=tipo;
+    var x=Math.random()*Math.max(20,area.clientWidth-45),y=-45;
+    el.style.left=x+"px";el.style.top=y+"px";area.appendChild(el);
+    duplaObstaculos.push({el:el,x:x,y:y,vel:235+Math.random()*105});
+}
+function moverObstaculosDupla(dt){
+    if(Math.random()<dt*4.15)criarObstaculoDupla();
+    for(var i=duplaObstaculos.length-1;i>=0;i--){
+        var o=duplaObstaculos[i];
+        o.y+=o.vel*dt;
+        o.el.style.top=o.y+"px";
+        var c=colisaoDupla(o);
+        if(c){
+            if(c.estado.gelo){aplicarGeloNaColisao(c.el,c.estado,o.el);if(o.el.parentNode)o.el.remove();duplaObstaculos.splice(i,1);continue;}
+            if(o.el.parentNode)o.el.remove();duplaObstaculos.splice(i,1);
+            if(consumirProtecaoDupla(c.estado,c.el))continue;
+            duplaVidaPerdida(c.estado);continue;
+        }
+        if(o.y>document.getElementById("areaJogo").clientHeight+60){if(o.el.parentNode)o.el.remove();duplaObstaculos.splice(i,1);}
+    }
+}
+function colisaoDupla(o){
+    var agora=performance.now();
+    var area=document.getElementById("areaJogo").getBoundingClientRect(),cx=area.left+o.x+15,cy=area.top+o.y+15;
+    var b1=document.getElementById("balao"),b2=document.getElementById("balao2");
+    function hit(b,estado){
+        if(!b||!estado.vivo)return false;
+        /* Pequena janela de segurança depois de um hit e durante o tornado.
+           Isso impede que vários objetos matem o mesmo jogador no mesmo instante. */
+        if(agora<estado.hitAte || agora<estado.vortexSafeAte)return false;
+        var r=b.getBoundingClientRect();
+        return Math.hypot(cx-(r.left+r.width/2),cy-(r.top+r.height/2))<34;
+    }
+    if(hit(b1,duplaP1))return {el:b1,estado:duplaP1};
+    if(hit(b2,duplaP2))return {el:b2,estado:duplaP2};
+    return null;
+}
+function duplaVidaPerdida(estado){
+    if(!duplaRodando||!estado.vivo)return;
+    /* Um objeto só pode registrar um hit; o jogador recebe 1s para escapar. */
+    estado.hitAte=performance.now()+1000;
+    estado.vivo=false;
+    estado.dirL=false; estado.dirR=false;
+    estado.poderes=[];
+    estado.score=Math.max(0,estado.score-10);
+    var alvo=estado===duplaP1?document.getElementById("balao"):document.getElementById("balao2");
+    if(alvo){
+        alvo.classList.add("dupla-hit-flash");
+        setTimeout(function(){if(alvo)alvo.classList.add("dupla-dead");},300);
+    }
+    atualizarHUDDupla();atualizarInventarioDupla();
+    var outro=estado===duplaP1?duplaP2:duplaP1;
+    if(outro.vivo){
+        document.getElementById("duplaBossInfo").textContent=(estado===duplaP1?"💥 P1 caiu! P2 continua!":"💥 P2 caiu! P1 continua!");
+    }
+    if(!duplaP1.vivo&&!duplaP2.vivo)setTimeout(function(){mostrarGameOverDupla();},350);
+}
+function mostrarGameOverDupla(){
+    if(!duplaRodando)return;duplaRodando=false;if(duplaAnim)cancelAnimationFrame(duplaAnim);duplaTimers.forEach(clearTimeout);duplaTimers=[];limparDuplaElementos();
+    var m=document.getElementById("duplaGameOverMsg");if(m)m.style.display="flex";
+}
+function atualizarHUDDupla(){
+    var p1=duplaP1.vivo?"P1 ⭐ "+duplaP1.score+(duplaP1.escudo1Hit?" 🛡️":""):"P1 💀";var p2=duplaP2.vivo?"P2 ⭐ "+duplaP2.score+(duplaP2.escudo1Hit?" 🛡️":""):"P2 💀";
+    var e=document.getElementById("duplaP1Score");if(e)e.textContent=p1;var f=document.getElementById("duplaP2Score");if(f)f.textContent=p2;
+    var q=document.getElementById("pontuacao");if(q)q.textContent=Math.floor((duplaP1.score+duplaP2.score)/2);
+}
+function usarPoderDupla(estado,el){
+    if(!duplaRodando||!estado.vivo||!estado.poderes.length)return;
+    var poder=estado.poderes.shift();atualizarInventarioDupla();
+    if(poder==="⚡"){
+        efeitoPoderDupla(el,"⚡");
+        duplaDanoBoss(42);
+        criarImpactoBossDupla("⚡");
+    }else if(poder==="🔱"){
+        efeitoPoderDupla(el,"🔱");
+        for(var i=0;i<3;i++){duplaDanoBoss(18);criarImpactoBossDupla("🔱",i);}
+    }else if(poder==="🌀"){
+        /* Tornado é controle de área, não uma arma de limpeza. Ele não mata
+           jogadores e apenas empurra alguns obstáculos próximos. */
+        efeitoPoderDupla(el,"🌀");
+        duplaDanoBoss(34);
+        var area=document.getElementById("areaJogo");
+        var centroX=el?el.offsetLeft+30:area.clientWidth/2;
+        var centroY=el?el.offsetTop+35:area.clientHeight-140;
+        estado.vortexSafeAte=performance.now()+900;
+        var candidatos=duplaObstaculos.filter(function(o){
+            if(!o.el.parentNode)return false;
+            var dx=(o.x+15)-centroX,dy=(o.y+15)-centroY;
+            return Math.hypot(dx,dy)<230;
+        });
+        /* No máximo 5 obstáculos por tornado. */
+        candidatos.slice(0,5).forEach(function(o){
+            var dx=(o.x+15)-centroX,dy=(o.y+15)-centroY;
+            var d=Math.max(1,Math.hypot(dx,dy));
+            var dirx=dx/d,diry=dy/d;
+            o.x+=dirx*170;
+            o.y+=diry*110;
+            o.el.style.left=o.x+"px";
+            o.el.style.top=o.y+"px";
+            o.el.style.transition="transform .55s ease, opacity .55s ease";
+            o.el.style.transform="translate("+(dirx*55)+"px,"+(diry*55)+"px) rotate(220deg) scale(.72)";
+            setTimeout(function(){if(o.el.parentNode){o.el.style.transform="";}},560);
+        });
+        criarImpactoBossDupla("🌀");
+    }else if(poder==="❄️"){
+        efeitoPoderDupla(el,"❄️");
+        estado.gelo=true;
+        estado.lentoAte=0;
+        if(duplaBoss.ativo){duplaBoss.slowAte=performance.now()+2200;criarImpactoBossDupla("❄️");}
+        atualizarInventarioDupla();
+    }
+}
+function criarImpactoBossDupla(icone,indice){
+    if(!duplaBoss.ativo)return;
+    var area=document.getElementById("areaJogo"),chefe=document.getElementById("chefe");
+    if(!area||!chefe||chefe.style.display==="none")return;
+    var a=area.getBoundingClientRect(),r=chefe.getBoundingClientRect();
+    var hit=document.createElement("div");
+    hit.className="dupla-fx "+(icone==="🌀"?"tornado-burst":icone==="❄️"?"icefield":icone==="🔱"?"trident-hit":"shockwave");
+    hit.textContent=icone;
+    hit.style.left=(r.left-a.left+r.width/2-35+(indice||0)*22-20)+"px";
+    hit.style.top=(r.top-a.top+r.height/2-35+(indice||0)*8)+"px";
+    area.appendChild(hit);
+    setTimeout(function(){if(hit.parentNode)hit.remove();},900);
+    chefe.classList.add("dupla-hit-flash");
+    setTimeout(function(){if(chefe.parentNode)chefe.classList.remove("dupla-hit-flash");},350);
+}
+
+function criarEfeitoColetaDupla(el,icone){
+    if(!el)return;
+    var area=document.getElementById("areaJogo"),r=el.getBoundingClientRect(),a=area.getBoundingClientRect();
+    var fx=document.createElement("div");fx.className="dupla-fx hit";fx.textContent=icone;
+    fx.style.left=(r.left-a.left+r.width/2-15)+"px";fx.style.top=(r.top-a.top-8)+"px";
+    area.appendChild(fx);setTimeout(function(){if(fx.parentNode)fx.remove();},600);
+}
+function efeitoPoderDupla(el,icone){
+    if(!el)return;
+    var area=document.getElementById("areaJogo"),r=el.getBoundingClientRect(),a=area.getBoundingClientRect();
+    var fx=document.createElement("div");
+    var cls=icone==="⚡"?"lightning":icone==="🔱"?"trident":icone==="🌀"?"tornado":"ice";
+    fx.className="dupla-fx "+cls;fx.textContent=icone;
+    fx.style.left=(r.left-a.left+r.width/2-28)+"px";fx.style.top=(r.top-a.top-5)+"px";
+    area.appendChild(fx);
+    setTimeout(function(){if(fx.parentNode)fx.remove();},900);
+    /* Um segundo impacto visual no chefe deixa claro que o poder acertou. */
+    if(duplaBoss.ativo){
+        var chefe=document.getElementById("chefe"),cr=chefe.getBoundingClientRect();
+        var hit=document.createElement("div");hit.className="dupla-fx hit";hit.textContent=icone;
+        hit.style.left=(cr.left-a.left+cr.width/2-15)+"px";hit.style.top=(cr.top-a.top+cr.height/2-15)+"px";
+        area.appendChild(hit);setTimeout(function(){if(hit.parentNode)hit.remove();},600);
+    }
+}
+function duplaDanoBoss(dano){if(!duplaBoss.ativo)return;duplaBoss.vida=Math.max(0,duplaBoss.vida-dano);document.getElementById("vidaChefe").style.width=(duplaBoss.vida/duplaBoss.max*100)+"%";if(duplaBoss.vida<=0)derrotarBossDupla();}
+function iniciarBossDupla(){
+    if(!duplaRodando)return;duplaBoss.ativo=true;duplaBoss.slowAte=0;aplicarCenarioDupla();duplaBoss.max=220+duplaBoss.nivel*90+duplaBoss.tipo*55;duplaBoss.vida=duplaBoss.max;
+    duplaBoss.x=document.getElementById("areaJogo").clientWidth/2-95;duplaBoss.dir=1;
+    document.getElementById("barraChefe").style.display="block";document.getElementById("vidaChefe").style.width="100%";
+    document.getElementById("duplaBossInfo").textContent=duplaBossEmoji[duplaBossNomes[duplaBoss.tipo]]+" "+duplaBossTitulo[duplaBossNomes[duplaBoss.tipo]]+" — NÍVEL "+duplaBoss.nivel+"/5";
+    criarVisualBossDupla();
+}
+function criarVisualBossDupla(){var chefe=document.getElementById("chefe");chefe.style.display="block";chefe.className="chefe boss-"+duplaBossNomes[duplaBoss.tipo];chefe.innerHTML="<div class='boss-aura'></div><div style='font-size:92px;text-align:center;padding-top:25px;filter:drop-shadow(0 0 15px #fff)'>"+duplaBossEmoji[duplaBossNomes[duplaBoss.tipo]]+"</div>";}
+function moverBossDupla(dt){
+    if(!duplaBoss.ativo)return;var area=document.getElementById("areaJogo"),chefe=document.getElementById("chefe");
+    var bossSlow=performance.now()<duplaBoss.slowAte?.42:1;
+    duplaBoss.x+=duplaBoss.dir*(100+duplaBoss.tipo*20)*dt*bossSlow;if(duplaBoss.x<5){duplaBoss.x=5;duplaBoss.dir=1;}if(duplaBoss.x>area.clientWidth-195){duplaBoss.x=area.clientWidth-195;duplaBoss.dir=-1;}
+    chefe.style.left=duplaBoss.x+"px";chefe.style.top="115px";chefe.style.transform="none";
+    if(Math.random()<dt*(1.2+duplaBoss.nivel*.2))criarAtaqueBossDupla();
+}
+function criarAtaqueBossDupla(){
+    var area=document.getElementById("areaJogo"),chefe=document.getElementById("chefe"),el=document.createElement("div");el.className="dupla-obstaculo";
+    var tipo=duplaBossNomes[duplaBoss.tipo];el.textContent=tipo==="eagle"?"⚡":tipo==="mister"?["⚡","🔱","🌀","❄️"][Math.floor(Math.random()*4)]:(tipo==="golem"?"🪨":tipo==="dragon"?"🔥":"🌀");
+    var x=chefe.offsetLeft+95,y=chefe.offsetTop+120;el.style.left=x+"px";el.style.top=y+"px";area.appendChild(el);duplaObstaculos.push({el:el,x:x,y:y,vel:175+duplaBoss.nivel*18});
+}
+function reviverParceiroAoMatarBoss(){
+    var estadoMorto=null,el=null;
+    if(!duplaP1.vivo && duplaP2.vivo){estadoMorto=duplaP1;el=document.getElementById("balao");}
+    else if(!duplaP2.vivo && duplaP1.vivo){estadoMorto=duplaP2;el=document.getElementById("balao2");}
+    if(!estadoMorto || !el)return false;
+    estadoMorto.vivo=true;estadoMorto.dirL=false;estadoMorto.dirR=false;estadoMorto.gelo=false;estadoMorto.lentoAte=0;
+    estadoMorto.poderes=[];
+    el.classList.remove("dupla-dead","dupla-hit-flash");
+    el.style.display="block";el.style.opacity="1";el.style.filter="drop-shadow(0 0 16px #4df) drop-shadow(0 0 34px #8ff)";
+    estadoMorto.x=estadoMorto===duplaP1?document.getElementById("areaJogo").clientWidth*.28-32:document.getElementById("areaJogo").clientWidth*.72-32;
+    setTimeout(function(){if(el.parentNode)el.style.filter="";},2200);
+    atualizarHUDDupla();atualizarInventarioDupla();
+    document.getElementById("duplaBossInfo").textContent="✨ O parceiro voltou! Boss derrotado!";
+    return true;
+}
+function derrotarBossDupla(){
+    if(!duplaBoss.ativo)return;
+    duplaBoss.ativo=false;
+    var chefe=document.getElementById("chefe");chefe.style.display="none";document.getElementById("barraChefe").style.display="none";
+    duplaP1.score+=100;duplaP2.score+=100;
+    var revive=reviverParceiroAoMatarBoss();
+    var bossCompleto=duplaBoss.nivel===5;
+    if(bossCompleto)ganharProtecaoBossDupla();
+    atualizarHUDDupla();
+    if(duplaBoss.nivel<5){duplaBoss.nivel++;duplaTimers.push(setTimeout(iniciarBossDupla,revive?1900:1200));}
+    else if(duplaBoss.tipo<4){duplaBoss.tipo++;duplaBoss.nivel=1;duplaTimers.push(setTimeout(iniciarBossDupla,revive?2500:1800));}
+    else{document.getElementById("duplaBossInfo").textContent="🏆 TODOS OS 5 CHEFES FORAM DERROTADOS!";duplaTimers.push(setTimeout(function(){encerrarDupla(true);},2500));}
+}
+function encerrarDupla(vitoria){
+    if(!duplaRodando&&!vitoria)return;duplaRodando=false;if(duplaAnim)cancelAnimationFrame(duplaAnim);duplaTimers.forEach(clearTimeout);duplaTimers=[];limparDuplaElementos();
+    var m=document.getElementById("duplaGameOverMsg");if(m)m.style.display="none";var h=document.getElementById("duplaHUD");if(h)h.style.display="none";var bi=document.getElementById("duplaBossInfo");if(bi)bi.style.display="none";
+    document.getElementById("jogo").classList.remove("modo-dupla");
+    ["cenario-2p-golem","cenario-2p-dragon","cenario-2p-reaper","cenario-2p-eagle","cenario-2p-mister"].forEach(function(c){document.getElementById("jogo").classList.remove(c);});var b2=document.getElementById("balao2");if(b2)b2.remove();document.getElementById("chefe").style.display="none";document.getElementById("barraChefe").style.display="none";
+    if(vitoria)alert("🏆 VITÓRIA! Vocês derrotaram os 5 chefes, com 5 níveis cada!");
+}
+/* Teclas 2P: usa event.code, que é mais confiável em teclados PT-BR. */
+window.addEventListener("keydown",function(e){
+    if(!duplaRodando||jogoPausado)return;
+    var c=e.code;
+    if(["ArrowLeft","ArrowRight","ArrowUp","KeyA","KeyD","KeyW"].indexOf(c)>=0)e.preventDefault();
+    if(c==="ArrowLeft")duplaP1.dirL=true;
+    if(c==="ArrowRight")duplaP1.dirR=true;
+    if(c==="ArrowUp"&&!e.repeat)usarPoderDupla(duplaP1,document.getElementById("balao"));
+    if(c==="KeyA")duplaP2.dirL=true;
+    if(c==="KeyD")duplaP2.dirR=true;
+    if(c==="KeyW"&&!e.repeat)usarPoderDupla(duplaP2,document.getElementById("balao2"));
+});
+window.addEventListener("keyup",function(e){
+    if(!duplaRodando)return;var c=e.code;
+    if(c==="ArrowLeft")duplaP1.dirL=false;if(c==="ArrowRight")duplaP1.dirR=false;if(c==="KeyA")duplaP2.dirL=false;if(c==="KeyD")duplaP2.dirR=false;
+});
+window.addEventListener("resize",function(){if(duplaRodando){aplicarPosDupla();}});
+
+/* adiciona HUD 2P depois do HTML existir */
+(function(){var h=document.getElementById("hud");if(h){var d=document.createElement("div");d.id="duplaHUD";d.innerHTML='<div id="duplaP1Score" class="dupla-hudbox">P1 ⭐ 0</div><div class="dupla-hudbox">👥 2P</div><div id="duplaP2Score" class="dupla-hudbox">P2 ⭐ 0</div>';document.getElementById("jogo").appendChild(d);}var bi=document.createElement("div");bi.id="duplaBossInfo";bi.textContent="";document.getElementById("jogo").appendChild(bi);
+var inv=document.createElement("div");inv.id="duplaInventario";document.getElementById("jogo").appendChild(inv);
+var go=document.createElement("div");go.id="duplaGameOverMsg";go.innerHTML=`<div class="card"><h2>💥 OS DOIS CAÍRAM</h2><p>O jogo terminou. Tentem novamente!</p><button type="button" onclick="document.getElementById('duplaGameOverMsg').style.display='none';reiniciarJogo();">🔄 JOGAR NOVAMENTE</button><button type="button" onclick="sairDoJogo();">⬅️ SAIR</button></div>`;document.getElementById("jogo").appendChild(go);})();
+
+atualizarModoMenu();atualizarEconomiaComPrecos();
+
+</script>
+
+
+<div id="duplaSetup">
+  <div class="dupla-card">
+    <h1>👥 2 JOGADORES</h1>
+    <p style="color:#aaa;margin:8px 0">Somente no computador • P1: ← → mover / ↑ poder • P2: A D mover / W poder</p>
+    <div class="dupla-skins">
+      <div class="dupla-player">
+        <h2>🎈 JOGADOR 1</h2>
+        <div id="skinsP1" class="dupla-skin-grid"></div>
+      </div>
+      <div class="dupla-player">
+        <h2>🎈 JOGADOR 2</h2>
+        <div id="skinsP2" class="dupla-skin-grid"></div>
+      </div>
+    </div>
+    <div id="duplaEscolhaStatus" style="color:#ffd54a;margin-bottom:10px">Escolham as skins.</div>
+    <button id="duplaReady" class="dupla-ready" type="button">✅ PRONTOS PARA JOGAR</button>
+    <button class="voltar" type="button" onclick="fecharDuplaSetup()">⬅️ VOLTAR</button>
+  </div>
+</div>
+
+</body>
+</html>
